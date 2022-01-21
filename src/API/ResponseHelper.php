@@ -10,5 +10,4 @@ class ResponseHelper
     {
         return json_decode($response->getBody()->__toString());
     }
-
 }
