@@ -12,29 +12,30 @@ use Psr\Http\Message\ResponseInterface;
 
 class MarketoClient implements MarketoClientInterface
 {
-    protected const DEFAULT_MAX_RETRY_REQUESTS   = 2;
-    protected const DEFAULT_TOKEN_REFRESH_OBJECT = null;
-    protected const TOKEN_INVALID                = 601;
-    protected const TOKEN_EXPIRED                = 602;
+    protected const DEFAULT_MAX_RETRY_REQUESTS = 2;
+    protected const TOKEN_INVALID              = 601;
+    protected const TOKEN_EXPIRED              = 602;
 
     private ClientInterface          $client;
     private MarketoProviderInterface $provider;
     private ?AccessToken             $accessToken;
-    private ?TokenRefreshInterface   $tokenRefreshCallback;
-    private int                      $maxRetryRequests;
+
+    /** @var callable|null */
+    private $tokenRefreshCallback;
+    private int $maxRetryRequests;
 
 
     private function __construct(
         ClientInterface $guzzleClient,
         MarketoProviderInterface $marketoProvider,
-        ?TokenRefreshInterface $tokenRefreshObject = null,
+        ?callable $tokenRefreshCallback = null,
         ?AccessToken $accessToken = null,
         int $maxRetryRequests
     ) {
         $this->client = $guzzleClient;
         $this->provider = $marketoProvider;
         $this->accessToken = $accessToken;
-        $this->tokenRefreshCallback = $tokenRefreshObject;
+        $this->tokenRefreshCallback = $tokenRefreshCallback;
         $this->maxRetryRequests = $maxRetryRequests;
     }
 
@@ -42,20 +43,20 @@ class MarketoClient implements MarketoClientInterface
         ClientInterface $guzzleClient,
         MarketoProviderInterface $marketoProvider,
         ?AccessToken $accessToken = null,
-        TokenRefreshInterface $tokenRefreshObject = self::DEFAULT_TOKEN_REFRESH_OBJECT,
+        ?callable $tokenRefreshCallback = null,
         int $maxRetryRequests = null
     ) {
         if (null === $maxRetryRequests) {
             $maxRetryRequests = static::DEFAULT_MAX_RETRY_REQUESTS;
         }
-        return new static($guzzleClient, $marketoProvider, $tokenRefreshObject, $accessToken, $maxRetryRequests);
+        return new static($guzzleClient, $marketoProvider, $tokenRefreshCallback, $accessToken, $maxRetryRequests);
     }
 
     public static function withDefaults(
         string $clientId,
         string $clientSecret,
         string $baseUrl,
-        TokenRefreshInterface $tokenRefreshObject = null,
+        ?callable $tokenRefreshCallback = null,
         int $maxRetryRequests = null
     ) {
         if (null === $maxRetryRequests) {
@@ -72,7 +73,7 @@ class MarketoClient implements MarketoClientInterface
             $baseUrl,
         );
 
-        return new static($guzzleClient, $marketoProvider, $tokenRefreshObject, null, $maxRetryRequests);
+        return new static($guzzleClient, $marketoProvider, $tokenRefreshCallback, null, $maxRetryRequests);
     }
 
 
@@ -104,11 +105,11 @@ class MarketoClient implements MarketoClientInterface
     private function refreshAccessToken()
     {
         $tokenResponse = $this->provider->getAccessToken('client_credentials');
-        if (!empty($this->tokenRefreshCallback)) {
-            $this->tokenRefreshCallback->tokenRefreshCallback($tokenResponse);
-        }
-
         $this->accessToken = $tokenResponse;
+
+        if (is_callable($this->tokenRefreshCallback)) {
+            call_user_func($this->tokenRefreshCallback, $tokenResponse);
+        }
     }
 
     private function retryRequest(string $method, string $uri, array $options): ResponseInterface

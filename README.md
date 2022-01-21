@@ -1,17 +1,18 @@
-# marketo-client
+Marketo Client
+---
 
-[![Travis](https://img.shields.io/travis/eventfarm/marketo-client.svg?maxAge=2592000?style=flat-square)](https://travis-ci.org/eventfarm/marketo-client)
-[![Downloads](https://img.shields.io/packagist/dt/eventfarm/marketo-client.svg?style=flat-square)](https://packagist.org/packages/eventfarm/marketo-client)
-[![Packagist](https://img.shields.io/packagist/l/eventfarm/marketo-client.svg?maxAge=2592000?style=flat-square)](https://packagist.org/packages/eventfarm/marketo-client)
-[![Code Climate](https://codeclimate.com/github/eventfarm/marketo-client/badges/gpa.svg)](https://codeclimate.com/github/eventfarm/marketo-client)
-[![Test Coverage](https://codeclimate.com/github/eventfarm/marketo-client/badges/coverage.svg)](https://codeclimate.com/github/eventfarm/marketo-client/coverage)
+[![Travis](https://img.shields.io/travis/netitus/marketo-client.svg?maxAge=2592000?style=flat-square)](https://travis-ci.org/netitus/marketo-client)
+[![Downloads](https://img.shields.io/packagist/dt/netitus/marketo-client.svg?style=flat-square)](https://packagist.org/packages/netitus/marketo-client)
+[![Packagist](https://img.shields.io/packagist/l/netitus/marketo-client.svg?maxAge=2592000?style=flat-square)](https://packagist.org/packages/netitus/marketo-client)
 
 This package provides an interface for interacting with the Marketo REST API.
 
-## Installation
+The code is a revamped fork form eventfarm/marketo-client. The core principles are the same, but the internal architecture has been simplified. Performance should be optimized.
+
+# Installation
 
 ```
-$ composer require eventfarm/marketo-client
+$ composer require netitus/marketo-client
 ```
 
 Or add the following lines to your ``composer.json`` file:
@@ -19,7 +20,7 @@ Or add the following lines to your ``composer.json`` file:
 ```json
 {
     "require": {
-        "eventfarm/marketo-client": "dev-master"
+        "netitus/marketo-client": "dev-master"
     }
 }
 ```
@@ -28,23 +29,27 @@ Or add the following lines to your ``composer.json`` file:
 $ composer install
 ```
 
+# Implementation details
+
 ## Project Defaults
 
 In order to get you up and running as easily as possible, we provide default implementations of a REST client and Marketo provider to use in combination with this package. 
 * We've chosen to use [Guzzle](https://github.com/guzzle/guzzle) for sending HTTP requests
-* We've chosen to use [The PHP League's Oauth Client](https://github.com/thephpleague/oauth2-client) and my [Marketo provider](https://github.com/kristenlk/oauth2-marketo) for Marketo authentication and token refresh.
+* We've chosen to use [The PHP League's Oauth Client](https://github.com/thephpleague/oauth2-client) and KirstenLK's [Marketo provider](https://github.com/kristenlk/oauth2-marketo) for Marketo authentication and token refresh.
 
-### Guzzle REST Client
+You can extend the client to implement your own interface to cache the access token, using the construct argument TokenRefreshCallback.   
+
+## Guzzle REST Client
 
 Our REST client implements the PSR-7 HTTP message interface.
 
 You can either use the provided [GuzzleRestClient](./src/RestClient/GuzzleRestClient.php) or have your own that implements our [RestClientInterface](./src/RestClient/RestClientInterface.php).
 
-### KristenlkMarketoProvider
+## MarketoProvider
 
-Our default Marketo provider is my [Marketo Provider](https://github.com/kristenlk/oauth2-marketo) library.
+Our default Marketo OAuth2 provider is the [Marketo Provider](https://github.com/kristenlk/oauth2-marketo) library.
 
-You can either use the provided [KristenlkMarketoProvider](./src/Oauth/KristenlkMarketoProvider.php) or use your own that implements our [MarketoProviderInterface](./src/Oauth/MarketoProviderInterface.php).
+You can either use the provided [MarketoProvider](./src/Oauth/MarketoProvider.php) or use your own that implements our [MarketoProviderInterface](./src/Oauth/MarketoProviderInterface.php).
 
 ## Example Client Implementation
 
@@ -54,38 +59,47 @@ namespace App;
 
 use EventFarm\Marketo\Oauth\AccessToken;
 use EventFarm\Marketo\MarketoClient;
-use EventFarm\Marketo\TokenRefreshInterface;
 
-class DemoMarketoClient implements TokenRefreshInterface
+class DemoMarketoAPI extends Marketo
 {
+    public function __cosntruct() {
+        parent::__construct($this->getMarketoClient());
+    }
+
     public function getMarketoClient():MarketoClient
     {
-        if (empty($this->marketo)) {
-            $this->marketo = MarketoClient::withDefaults(
-                'ACCESS_TOKEN',
-                'TOKEN_EXPIRES_IN', // when the current access token expires (in seconds)
-                'TOKEN_LAST_REFRESH', // when the current access token was last refreshed (as a UNIX timestamp)
+        if (empty($this->client)) {
+            $this->client = MarketoClient::with(
                 'CLIENT_ID',
                 'CLIENT_SECRET',
                 'BASE_URL',
-                $this // TokenRefreshInterface
+                $this->getRefreshTokenFromCache(),               
+                $this->tokenRefreshCallback
             );
         }
-        return $this->marketo;
+        return $this->client;
+    }
+    
+    private function getRefreshTokenFromCache(): ?AccessToken {
+        // get token from cache
+        return new AccessToken('my_token', 300, 1642768705);
+        // or return null
     }
 
     public function tokenRefreshCallback(AccessToken $token)
     {
-        // CALLBACK FUNCTION TO STORE THE REFRESHED $token TO PERSISTENCE LAYER
+        // store the token
     }
 }
 ```
 
-## Usage
+# Usage
 
-### Campaigns
+The use of the Marketo helper interface is completely optional. All it does, is wrap the MarketoClient into the API endpoint abstractions.
 
-#### Get Campaigns
+## Campaigns
+
+## Get Campaigns
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Campaigns/getCampaignsUsingGET)
 Returns a list of campaign records. Refer to the docs for the full list of options.
 
@@ -93,7 +107,7 @@ Returns a list of campaign records. Refer to the docs for the full list of optio
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $options = [
   "programName" => "My Marketo Program",
@@ -115,7 +129,7 @@ Passes a set of leads to a trigger campaign to run through the campaign's flow. 
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $campaignId = 1029;
 $options = [
@@ -142,7 +156,7 @@ Returns metadata about lead objects in the target instance, including a list of 
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 $leadFields = $demoMarketoClient->leadFields()->getLeadFields();
 // $leadFields = { ... }
 ```
@@ -163,7 +177,7 @@ By default, Marketo sets the type of sync operation (`action`) to `createOrUpdat
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $options = [
     "input" => [
@@ -194,7 +208,7 @@ Changes the program status of a list of leads in a target program. Refer to the 
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $programId = 1234;
 $options = [
@@ -220,7 +234,7 @@ Retrieves a list of leads that are members of the designated program. Refer to t
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $programId = 1234;
 $options = [
@@ -241,7 +255,7 @@ Returns a list of available partitions in the target instance. Refer to the docs
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $partitions = $demoMarketoClient->partitions()->getPartitions();
 // $partitions = { ... }
@@ -256,7 +270,7 @@ Retrieves the list of accessible programs from the target instance. Refer to the
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $programs = $demoMarketoClient->programs()->getPrograms();
 // $programs = { ... }
@@ -273,7 +287,7 @@ Retrieves channels based on the provided name. Refer to the docs for the full li
 
 ```php
 <?php
-$demoMarketoClient = new DemoMarketoClient()->getMarketoClient();
+$demoMarketo = new DemoMarketoAPI();
 
 $programChannel = "Live Event";
 

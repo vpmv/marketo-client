@@ -3,7 +3,6 @@
 namespace EventFarm\Marketo\Tests\Client;
 
 use EventFarm\Marketo\Client\MarketoClient;
-use EventFarm\Marketo\Client\TokenRefreshInterface;
 use EventFarm\Marketo\Oauth\AccessToken;
 use EventFarm\Marketo\Oauth\MarketoProvider;
 use EventFarm\Marketo\Oauth\RetryAuthorizationTokenFailedException;
@@ -22,8 +21,6 @@ class MarketoClientTest extends TestCase
             ->andReturn(1234567890);
         $accessToken->shouldReceive('getExpires')
             ->andReturn(1000);
-        $tokenRefreshCallback = \Mockery::mock(TokenRefreshInterface::class);
-        $tokenRefreshCallback->shouldReceive('tokenRefreshCallback');
         $provider->shouldReceive('getAccessToken')
             ->andReturn($accessToken);
         $accessToken->shouldReceive('getToken')
@@ -44,7 +41,9 @@ class MarketoClientTest extends TestCase
             $restClient,
             $provider,
             $accessToken,
-            $tokenRefreshCallback,
+            function (AccessToken $t) use ($accessToken) {
+                $this->assertEquals($t->getToken(), $accessToken->getToken());
+            },
             $maxRetry
         );
         try {
@@ -65,8 +64,6 @@ class MarketoClientTest extends TestCase
             ->andReturn(1234567890);
         $accessToken->shouldReceive('getExpires')
             ->andReturn(1000);
-        $tokenRefreshCallback = \Mockery::mock(TokenRefreshInterface::class);
-        $tokenRefreshCallback->shouldReceive('tokenRefreshCallback');
         $provider->shouldReceive('getAccessToken')
             ->andReturn($accessToken);
         $accessToken->shouldReceive('getToken')
@@ -96,7 +93,9 @@ class MarketoClientTest extends TestCase
             $restClient,
             $provider,
             $accessToken,
-            $tokenRefreshCallback,
+            function (AccessToken $t) use ($accessToken) {
+                $this->assertEquals($t->getToken(), $accessToken->getToken());
+            },
             $maxRetry
         );
         $response = $marketoClient->request('GET', '/example/getExample');
@@ -113,8 +112,6 @@ class MarketoClientTest extends TestCase
             ->andReturn(1234567890);
         $accessToken->shouldReceive('getExpires')
             ->andReturn(1000);
-        $tokenRefreshCallback = \Mockery::mock(TokenRefreshInterface::class);
-        $tokenRefreshCallback->shouldReceive('tokenRefreshCallback');
         $provider->shouldReceive('getAccessToken')
             ->andReturn($accessToken);
         $accessToken->shouldReceive('getToken')
@@ -144,7 +141,9 @@ class MarketoClientTest extends TestCase
             $restClient,
             $provider,
             $accessToken,
-            $tokenRefreshCallback,
+            function (AccessToken $t) use ($accessToken) {
+                $this->assertEquals($t->getToken(), $accessToken->getToken());
+            },
             $maxRetry
         );
         $response = $marketoClient->request('GET', '/example/getExample');
