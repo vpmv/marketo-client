@@ -1,12 +1,17 @@
 <?php
-use EventFarm\Marketo\Oauth\MarketoProviderInterface;
-use EventFarm\Marketo\RestClient\RestClientInterface;
+
+namespace EventFarm\Marketo\Tests;
+
+use EventFarm\Marketo\Client\MarketoClient;
+use EventFarm\Marketo\Marketo;
 use EventFarm\Marketo\Oauth\AccessToken;
-use EventFarm\Marketo\MarketoClient;
-// use Mockery;
+use EventFarm\Marketo\Oauth\MarketoProviderInterface;
+use GuzzleHttp\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class MarketoClientTest extends \PHPUnit_Framework_TestCase
+// use Mockery;
+
+class MarketoTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetCampaignsSendsCorrectRequestWithoutOptions()
     {
@@ -22,7 +27,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/v1/campaigns.json',
             $this->getAuthorizationHeader()
         );
-        $marketoClient->campaigns()->getCampaigns();
+        $marketo = new Marketo($marketoClient);
+        $marketo->campaigns()->getCampaigns();
+        \Mockery::close();
     }
 
     public function testGetCampaignsSendsCorrectRequestWithOptions()
@@ -41,7 +48,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/v1/campaigns.json?programName=' . $programName . '&nextPageToken=' . $nextPageToken,
             $this->getAuthorizationHeader()
         );
-        $marketoClient->campaigns()->getCampaigns(['programName' => $programName, 'nextPageToken' => $nextPageToken]);
+        $marketo = new Marketo($marketoClient);
+        $marketo->campaigns()->getCampaigns(['programName' => $programName, 'nextPageToken' => $nextPageToken]);
+        \Mockery::close();
     }
 
     public function testTriggerCampaignSendsCorrectRequestWithOptions()
@@ -54,13 +63,13 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             'input' => [
                 'leads' => [
                     [
-                        'id' => 2931
+                        'id' => 2931,
                     ],
                     [
-                        'id' => 1459
-                    ]
-                ]
-            ]
+                        'id' => 1459,
+                    ],
+                ],
+            ],
         ];
 
         // Act/Assert
@@ -72,12 +81,14 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . 'myAccessToken',
-                    'Content-Type' => 'application/json'
+                    'Content-Type'  => 'application/json',
                 ],
-                'json' => $options
+                'json'    => $options,
             ]
         );
-        $marketoClient->campaigns()->triggerCampaign($campaignId, $options);
+        $marketo = new Marketo($marketoClient);
+        $marketo->campaigns()->triggerCampaign($campaignId, $options);
+        \Mockery::close();
     }
 
     public function testGetLeadFieldsSendsCorrectRequest()
@@ -94,7 +105,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/v1/leads/describe.json',
             $this->getAuthorizationHeader()
         );
-        $marketoClient->leadFields()->getLeadFields();
+        $marketo = new Marketo($marketoClient);
+        $marketo->leadFields()->getLeadFields();
+        \Mockery::close();
     }
 
     public function testCreateOrUpdateLeadsSendsCorrectRequestWithOptions()
@@ -105,16 +118,16 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
         $options = [
             'input' => [
                 [
-                    'email' => 'exampleemail1@example.com',
+                    'email'     => 'exampleemail1@example.com',
                     'firstName' => 'Example1',
-                    'lastName' => 'Example2'
+                    'lastName'  => 'Example2',
                 ],
                 [
-                    'email' => 'exampleemail2@example.com',
+                    'email'     => 'exampleemail2@example.com',
                     'firstName' => 'Example2',
-                    'lastName' => 'Example2'
-                ]
-            ]
+                    'lastName'  => 'Example2',
+                ],
+            ],
         ];
 
         // Act/Assert
@@ -126,12 +139,14 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . 'myAccessToken',
-                    'Content-Type' => 'application/json'
+                    'Content-Type'  => 'application/json',
                 ],
-                'json' => $options
+                'json'    => $options,
             ]
         );
-        $marketoClient->leads()->createOrUpdateLeads($options);
+        $marketo = new Marketo($marketoClient);
+        $marketo->leads()->createOrUpdateLeads($options);
+        \Mockery::close();
     }
 
     public function testUpdateLeadsProgramStatusSendsCorrectRequestWithOptions()
@@ -141,12 +156,12 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
         $response = $this->getResponseMock();
         $programId = 1234;
         $options = [
-            'input' => [
+            'input'  => [
                 [
-                    'id' => 2931
-                ]
+                    'id' => 2931,
+                ],
             ],
-            'status' => 'Registered'
+            'status' => 'Registered',
         ];
 
         // Act/Assert
@@ -158,12 +173,14 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . 'myAccessToken',
-                    'Content-Type' => 'application/json'
+                    'Content-Type'  => 'application/json',
                 ],
-                'json' => $options
+                'json'    => $options,
             ]
         );
-        $marketoClient->leads()->updateLeadsProgramStatus($programId, $options);
+        $marketo = new Marketo($marketoClient);
+        $marketo->leads()->updateLeadsProgramStatus($programId, $options);
+        \Mockery::close();
     }
 
     public function testGetLeadsByProgramSendsCorrectRequestWithoutOptions()
@@ -181,7 +198,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/v1/leads/programs/' . $programId . '.json',
             $this->getAuthorizationHeader()
         );
-        $marketoClient->leads()->getLeadsByProgram($programId);
+        $marketo = new Marketo($marketoClient);
+        $marketo->leads()->getLeadsByProgram($programId);
+        \Mockery::close();
     }
 
     public function testGetLeadsByProgramSendsCorrectRequestWithOptions()
@@ -192,8 +211,8 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
         $programId = 1234;
         $nextPageToken = 'abc123';
         $options = [
-            'fields' => 'firstName,lastName,email',
-            'nextPageToken' => $nextPageToken
+            'fields'        => 'firstName,lastName,email',
+            'nextPageToken' => $nextPageToken,
         ];
 
         // Act/Assert
@@ -204,7 +223,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/v1/leads/programs/' . $programId . '.json?fields=' . $options['fields'] . '&nextPageToken=' . $nextPageToken,
             $this->getAuthorizationHeader()
         );
-        $marketoClient->leads()->getLeadsByProgram($programId, $options);
+        $marketo = new Marketo($marketoClient);
+        $marketo->leads()->getLeadsByProgram($programId, $options);
+        \Mockery::close();
     }
 
     public function testGetPartitionsSendsCorrectRequest()
@@ -221,7 +242,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/v1/leads/partitions.json',
             $this->getAuthorizationHeader()
         );
-        $marketoClient->partitions()->getPartitions();
+        $marketo = new Marketo($marketoClient);
+        $marketo->partitions()->getPartitions();
+        \Mockery::close();
     }
 
     public function testGetProgramsSendsCorrectRequestWithoutOptions()
@@ -238,7 +261,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/asset/v1/programs.json?maxReturn=200',
             $this->getAuthorizationHeader()
         );
-        $marketoClient->programs()->getPrograms();
+        $marketo = new Marketo($marketoClient);
+        $marketo->programs()->getPrograms();
+        \Mockery::close();
     }
 
     public function testGetProgramsSendsCorrectRequestWithOptions()
@@ -256,7 +281,9 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/asset/v1/programs.json?maxReturn=200&offset=' . $offset,
             $this->getAuthorizationHeader()
         );
-        $marketoClient->programs()->getPrograms(['offset' => $offset]);
+        $marketo = new Marketo($marketoClient);
+        $marketo->programs()->getPrograms(['offset' => $offset]);
+        \Mockery::close();
     }
 
     public function testGetStatusesSendsCorrectRequest()
@@ -274,22 +301,24 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             '/rest/asset/v1/channel/byName.json?name=' . $programChannel,
             $this->getAuthorizationHeader()
         );
-        $marketoClient->statuses()->getStatuses($programChannel);
+        $marketo = new Marketo($marketoClient);
+        $marketo->statuses()->getStatuses($programChannel);
+        \Mockery::close();
     }
 
     private function getAuthorizationHeader()
     {
         return [
             'headers' => [
-                'Authorization' => 'Bearer ' . 'myAccessToken'
-            ]
+                'Authorization' => 'Bearer ' . 'myAccessToken',
+            ],
         ];
     }
 
     private function getMarketoProviderMock()
     {
-        $provider = Mockery::mock(MarketoProviderInterface::class);
-        $accessToken = Mockery::mock(AccessToken::class);
+        $provider = \Mockery::mock(MarketoProviderInterface::class);
+        $accessToken = \Mockery::mock(AccessToken::class);
         $provider->shouldReceive('getAccessToken')
             ->andReturn($accessToken);
         $accessToken->shouldReceive('getToken')
@@ -300,7 +329,7 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
     private function getResponseMock(
         int $responseCode = 200
     ) {
-        $response = Mockery::mock(ResponseInterface::class);
+        $response = \Mockery::mock(ResponseInterface::class);
         $response->shouldReceive('getStatusCode')
             ->andReturn($responseCode);
         $response->shouldReceive('getBody')
@@ -313,7 +342,7 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
     private function getFailureResponseMock(
         int $responseCode = 200
     ) {
-        $response = Mockery::mock(ResponseInterface::class);
+        $response = \Mockery::mock(ResponseInterface::class);
         $response->shouldReceive('getStatusCode')
             ->andReturn($responseCode);
         $response->shouldReceive('getBody')
@@ -329,8 +358,8 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
         string $method,
         string $endpoint,
         array $options
-    ):MarketoClient {
-        $restClient = Mockery::mock(RestClientInterface::class);
+    ): MarketoClient {
+        $restClient = \Mockery::mock(ClientInterface::class);
         $restClient->shouldReceive('request')
             ->andReturnUsing(function ($m, $e, $o) use ($method, $endpoint, $options, $response) {
                 $this->assertEquals($method, $m);
@@ -342,26 +371,22 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
         return MarketoClient::with(
             $restClient,
             $marketoProvider,
-            'myAccessToken',
-            1234567890,
-            2345678901
+            new AccessToken('myAccessToken', 1234567890, 2345678901)
         );
     }
 
     private function getMarketoClient(
         ResponseInterface $response,
         MarketoProviderInterface $marketoProvider
-    ):MarketoClient {
-        $restClient = Mockery::mock(RestClientInterface::class);
+    ): MarketoClient {
+        $restClient = \Mockery::mock(ClientInterface::class);
         $restClient->shouldReceive('request')
             ->andReturn($response)
             ->once();
         return MarketoClient::with(
             $restClient,
             $marketoProvider,
-            'myAccessToken',
-            1234567890,
-            2345678901
+            new AccessToken('myAccessToken', 1234567890, 2345678901)
         );
     }
 }

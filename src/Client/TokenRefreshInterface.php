@@ -1,5 +1,6 @@
 <?php
-namespace EventFarm\Marketo;
+
+namespace EventFarm\Marketo\Client;
 
 use EventFarm\Marketo\Oauth\AccessToken;
 

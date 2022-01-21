@@ -1,45 +1,41 @@
 <?php
+
 namespace EventFarm\Marketo\API;
 
-use EventFarm\Marketo\RestClient\MarketoRestClient;
+use EventFarm\Marketo\Client\MarketoClientInterface;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class Leads
 {
-    /**
-     * @var MarketoClientInterface
-     */
-    private $marketoRestClient;
+    /** @var MarketoClientInterface */
+    private $client;
 
-    public function __construct(MarketoRestClient $marketoRestClient)
+    public function __construct(MarketoClientInterface $client)
     {
-        $this->marketoRestClient = $marketoRestClient;
+        $this->client = $client;
     }
 
-    public function createOrUpdateLeads(array $options)
+    public function createOrUpdateLeads(array $objects): ResponseInterface
     {
         $endpoint = '/rest/v1/leads.json';
-
         $requestOptions = [
+            'json'    => $objects,
             'headers' => [
                 // 'Accepts' => 'application/json'
                 'Content-Type' => 'application/json',
             ],
-            'json' => []
         ];
 
-        foreach ($options as $key => $value) {
-            $requestOptions['json'][$key] = $value;
-        }
 
         try {
-            $response = $this->marketoRestClient->request('post', $endpoint, $requestOptions);
-            return $this->marketoRestClient->getBodyObjectFromResponse($response);
-        } catch (MarketoException $e) {
-            print_r('Unable to create or update leads: ' . $e);
+            return $this->client->request('post', $endpoint, $requestOptions);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to create or update leads: ' . $e);
         }
     }
 
-    public function updateLeadsProgramStatus(int $programId, array $options = array())
+    public function updateLeadsProgramStatus(int $programId, array $options = []): ResponseInterface
     {
         $endpoint = '/rest/v1/leads/programs/' . $programId . '/status.json';
 
@@ -47,7 +43,7 @@ class Leads
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
-            'json' => []
+            'json'    => [],
         ];
 
         foreach ($options as $key => $value) {
@@ -55,14 +51,13 @@ class Leads
         }
 
         try {
-            $response = $this->marketoRestClient->request('post', $endpoint, $requestOptions);
-            return $this->marketoRestClient->getBodyObjectFromResponse($response);
-        } catch (MarketoException $e) {
-            print_r('Unable to update leads\' program statuses: ' . $e);
+            return $this->client->request('post', $endpoint, $requestOptions);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to update leads\' program statuses: ' . $e);
         }
     }
 
-    public function getLeadsByProgram(int $programId, array $options = array())
+    public function getLeadsByProgram(int $programId, array $options = []): ResponseInterface
     {
         // Add &batchSize=1 to test batches of campaigns
         $endpoint = '/rest/v1/leads/programs/' . $programId . '.json';
@@ -75,10 +70,9 @@ class Leads
         }
 
         try {
-            $response = $this->marketoRestClient->request('get', $endpoint);
-            return $this->marketoRestClient->getBodyObjectFromResponse($response);
-        } catch (MarketoException $e) {
-            print_r('Unable to get leads by program: ' . $e);
+            return $this->client->request('get', $endpoint);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to get leads by program: ' . $e);
         }
     }
 }

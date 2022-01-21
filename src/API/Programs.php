@@ -1,21 +1,22 @@
 <?php
+
 namespace EventFarm\Marketo\API;
 
-use EventFarm\Marketo\RestClient\MarketoRestClient;
+use EventFarm\Marketo\Client\MarketoClientInterface;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class Programs
 {
-    /**
-     * @var MarketoClientInterface
-     */
+    /** @var MarketoClientInterface */
     private $marketoRestClient;
 
-    public function __construct(MarketoRestClient $marketoRestClient)
+    public function __construct(MarketoClientInterface $client)
     {
-        $this->marketoRestClient = $marketoRestClient;
+        $this->marketoRestClient = $client;
     }
 
-    public function getPrograms(array $options = array())
+    public function getPrograms(array $options = []): ResponseInterface
     {
         $endpoint = '/rest/asset/v1/programs.json?maxReturn=200';
 
@@ -27,10 +28,9 @@ class Programs
         }
 
         try {
-            $response = $this->marketoRestClient->request('get', $endpoint);
-            return $this->marketoRestClient->getBodyObjectFromResponse($response);
-        } catch (MarketoException $e) {
-            print_r('Unable to get programs: ' . $e);
+            return $this->marketoRestClient->request('get', $endpoint);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to get programs: ' . $e);
         }
     }
 }

@@ -1,21 +1,22 @@
 <?php
+
 namespace EventFarm\Marketo\API;
 
-use EventFarm\Marketo\RestClient\MarketoRestClient;
+use EventFarm\Marketo\Client\MarketoClientInterface;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class Statuses
 {
-    /**
-     * @var MarketoClientInterface
-     */
-    private $marketoRestClient;
+    /** @var MarketoClientInterface */
+    private $client;
 
-    public function __construct(MarketoRestClient $marketoRestClient)
+    public function __construct(MarketoClientInterface $client)
     {
-        $this->marketoRestClient = $marketoRestClient;
+        $this->client = $client;
     }
 
-    public function getStatuses(string $programChannel, array $options = array())
+    public function getStatuses(string $programChannel, array $options = []): ResponseInterface
     {
         $endpoint = '/rest/asset/v1/channel/byName.json?name=' . $programChannel;
 
@@ -27,10 +28,9 @@ class Statuses
         }
 
         try {
-            $response = $this->marketoRestClient->request('get', $endpoint);
-            return $this->marketoRestClient->getBodyObjectFromResponse($response);
-        } catch (MarketoException $e) {
-            print_r('Unable to get statuses: ' . $e);
+            return $this->client->request('get', $endpoint);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to get statuses: ' . $e);
         }
     }
 }

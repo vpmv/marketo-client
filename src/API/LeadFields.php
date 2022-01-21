@@ -1,21 +1,22 @@
 <?php
+
 namespace EventFarm\Marketo\API;
 
-use EventFarm\Marketo\RestClient\MarketoRestClient;
+use EventFarm\Marketo\Client\MarketoClientInterface;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class LeadFields
 {
-    /**
-     * @var MarketoClientInterface
-     */
-    private $marketoRestClient;
+    /** @var MarketoClientInterface */
+    private $client;
 
-    public function __construct(MarketoRestClient $marketoRestClient)
+    public function __construct(MarketoClientInterface $client)
     {
-        $this->marketoRestClient = $marketoRestClient;
+        $this->client = $client;
     }
 
-    public function getLeadFields(array $options = array())
+    public function getLeadFields(array $options = []): ResponseInterface
     {
         $endpoint = '/rest/v1/leads/describe.json';
 
@@ -27,10 +28,9 @@ class LeadFields
         }
 
         try {
-            $response = $this->marketoRestClient->request('get', $endpoint);
-            return $this->marketoRestClient->getBodyObjectFromResponse($response);
-        } catch (MarketoException $e) {
-            print_r('Unable to get lead fields: ' . $e);
+            return $this->client->request('get', $endpoint);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to get lead fields: ' . $e);
         }
     }
 }

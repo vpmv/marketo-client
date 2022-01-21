@@ -1,21 +1,23 @@
 <?php
+
 namespace EventFarm\Marketo\API;
 
+use EventFarm\Marketo\Client\MarketoClientInterface;
 use EventFarm\Marketo\RestClient\MarketoRestClient;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class Partitions
 {
-    /**
-     * @var MarketoClientInterface
-     */
-    private $marketoRestClient;
+    /** @var MarketoClientInterface */
+    private $client;
 
-    public function __construct(MarketoRestClient $marketoRestClient)
+    public function __construct(MarketoClientInterface $client)
     {
-        $this->marketoRestClient = $marketoRestClient;
+        $this->client = $client;
     }
 
-    public function getPartitions(array $options = array())
+    public function getPartitions(array $options = []): ResponseInterface
     {
         $endpoint = '/rest/v1/leads/partitions.json';
 
@@ -27,10 +29,9 @@ class Partitions
         }
 
         try {
-            $response = $this->marketoRestClient->request('get', $endpoint);
-            return $this->marketoRestClient->getBodyObjectFromResponse($response);
-        } catch (MarketoException $e) {
-            print_r('Unable to get partitions: ' . $e);
+            return $this->client->request('get', $endpoint);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to get partitions: ' . $e);
         }
     }
 }
