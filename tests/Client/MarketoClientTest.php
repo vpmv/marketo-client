@@ -8,9 +8,10 @@ use EventFarm\Marketo\Oauth\AccessToken;
 use EventFarm\Marketo\Oauth\MarketoProvider;
 use EventFarm\Marketo\Oauth\RetryAuthorizationTokenFailedException;
 use GuzzleHttp\ClientInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
-class MarketoClientTest extends \PHPUnit_Framework_TestCase
+class MarketoClientTest extends TestCase
 {
     public function testExceptionIsThrownWhenClientRetriesMoreThanMaxRetry()
     {
@@ -51,6 +52,7 @@ class MarketoClientTest extends \PHPUnit_Framework_TestCase
             $this->fail('An exception should have been thrown');
         } catch (RetryAuthorizationTokenFailedException $e) {
         }
+        $this->assertEquals(1, 1);
         \Mockery::close();
     }
 

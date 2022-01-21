@@ -7,11 +7,12 @@ use EventFarm\Marketo\Marketo;
 use EventFarm\Marketo\Oauth\AccessToken;
 use EventFarm\Marketo\Oauth\MarketoProviderInterface;
 use GuzzleHttp\ClientInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 // use Mockery;
 
-class MarketoTest extends \PHPUnit_Framework_TestCase
+class MarketoTest extends TestCase
 {
     public function testGetCampaignsSendsCorrectRequestWithoutOptions()
     {

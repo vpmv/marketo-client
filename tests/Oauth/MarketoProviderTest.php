@@ -4,8 +4,9 @@ namespace EventFarm\Marketo\Tests\Oauth;
 use EventFarm\Marketo\Oauth\MarketoProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Kristenlk\OAuth2\Client\Provider\Marketo;
+use PHPUnit\Framework\TestCase;
 
-class MarketoProviderTest extends \PHPUnit_Framework_TestCase
+class MarketoProviderTest extends TestCase
 {
     public function testLeagueAccessTokenFacade()
     {
