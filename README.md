@@ -97,10 +97,13 @@ class DemoMarketoAPI extends Marketo
 
 The use of the Marketo helper interface is completely optional. All it does, is wrap the MarketoClient into the API endpoint abstractions.
 
+> N.B.: Some implementations have changed during the overhaul and might not work as described below!
+
 ## Campaigns
 
-## Get Campaigns
+### Get Campaigns
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Campaigns/getCampaignsUsingGET)
+
 Returns a list of campaign records. Refer to the docs for the full list of options.
 
 `public function getCampaigns(array $options = array())`
@@ -114,13 +117,14 @@ $options = [
   "batchSize" => 10
 ];
 
-$campaigns = $demoMarketoClient->campaigns()->getCampaigns($options);
+$campaigns = $demoMarketo->campaigns()->getCampaigns($options);
 // getCampaigns() can also be called without options.
 // $campaigns = { ... }
 ```
 
-#### Trigger Campaign
+### Trigger Campaign
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Campaigns/triggerCampaignUsingPOST)
+
 Passes a set of leads to a trigger campaign to run through the campaign's flow. Refer to the docs for the full list of options.
 
 * A `campaignId` and an array of options that includes an `input` key (mapped to an array that contains arrays of lead data) must be passed to `triggerCampaign()`.
@@ -142,14 +146,15 @@ $options = [
     ]//, additional options
 ];
 
-$campaign = $demoMarketoClient->campaigns()->triggerCampaign($campaignId, $options);
+$campaign = $demoMarketo->campaigns()->triggerCampaign($campaignId, $options);
 // $campaign = { ... }
 ```
 
-### Lead Fields
+## Lead Fields
 
-#### Get Lead Fields
+### Get Lead Fields
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Leads/describeUsingGET_2)
+
 Returns metadata about lead objects in the target instance, including a list of all fields available for interaction via the APIs.
 
 `public function getLeadFields(array $options = array())`
@@ -157,14 +162,15 @@ Returns metadata about lead objects in the target instance, including a list of 
 ```php
 <?php
 $demoMarketo = new DemoMarketoAPI();
-$leadFields = $demoMarketoClient->leadFields()->getLeadFields();
+$leadFields = $demoMarketo->leadFields()->getLeadFields();
 // $leadFields = { ... }
 ```
 
-### Leads
+## Leads
 
 #### Create or Update Leads
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Leads/syncLeadUsingPOST)
+
 Syncs a list of leads to the target instance. Refer to the docs for the full list of options.
 
 * An array of options that includes an `input` key (mapped to an array that contains arrays of lead data) must be passed to `createOrUpdateLeads()`.
@@ -194,12 +200,13 @@ $options = [
     ]//, additional options
 ];
 
-$leads = $demoMarketoClient->leads()->createOrUpdateLeads($options);
+$leads = $demoMarketo->leads()->createOrUpdateLeads($options);
 // $leads = { ... }
 ```
 
-#### Update Leads' Program Status
+### Update Leads' Program Status
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Leads/changeLeadProgramStatusUsingPOST)
+
 Changes the program status of a list of leads in a target program. Refer to the docs for the full list of options.
 
 * A `programId` and an array of options that includes an `input` key (mapped to an array that contains arrays of lead data) and a `status` key (mapped to a program status) must be passed to `updateLeadsProgramStatus()`.
@@ -220,12 +227,13 @@ $options = [
     "status" => "Registered"
 ];
 
-$leads = $demoMarketoClient->leads()->updateLeadsProgramStatus($programId, $options);
+$leads = $demoMarketo->leads()->updateLeadsProgramStatus($programId, $options);
 // $leads = { ... }
 ```
 
-#### Get Leads by Program
+### Get Leads by Program
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Leads/getLeadsByProgramIdUsingGET)
+
 Retrieves a list of leads that are members of the designated program. Refer to the docs for the full list of options.
 
 * A `programId` must be passed to `getLeadsByProgram()`.
@@ -241,14 +249,15 @@ $options = [
     "fields" => 'firstName,lastName,email,middleName,mktoIsPartner';
 ];
 
-$leads = $demoMarketoClient->leads()->getLeadsByProgram($programId, $options);
+$leads = $demoMarketo->leads()->getLeadsByProgram($programId, $options);
 // getLeadsByProgram() can also be called without options.
 // $leads = { ... }
 ```
 
-### Lead Partitions
-#### Get Lead Partitions
+## Lead Partitions
+### Get Lead Partitions
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Leads/getLeadPartitionsUsingGET)
+
 Returns a list of available partitions in the target instance. Refer to the docs for the full list of options.
 
 `public function getPartitions(array $options = array())`
@@ -257,13 +266,14 @@ Returns a list of available partitions in the target instance. Refer to the docs
 <?php
 $demoMarketo = new DemoMarketoAPI();
 
-$partitions = $demoMarketoClient->partitions()->getPartitions();
+$partitions = $demoMarketo->partitions()->getPartitions();
 // $partitions = { ... }
 ```
 
-### Programs
-#### Get Programs
+## Programs
+### Get Programs
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/asset-endpoint-reference/#!/Programs/browseProgramsUsingGET)
+
 Retrieves the list of accessible programs from the target instance. Refer to the docs for the full list of options.
 
 `public function getPrograms(array $options = array())`
@@ -272,13 +282,14 @@ Retrieves the list of accessible programs from the target instance. Refer to the
 <?php
 $demoMarketo = new DemoMarketoAPI();
 
-$programs = $demoMarketoClient->programs()->getPrograms();
+$programs = $demoMarketo->programs()->getPrograms();
 // $programs = { ... }
 ```
 
-### Statuses
-#### Get Statuses
+## Statuses
+### Get Statuses
 [Docs](http://developers.marketo.com/rest-api/endpoint-reference/asset-endpoint-reference/#!/Channels/getChannelByNameUsingGET)
+
 Retrieves channels based on the provided name. Refer to the docs for the full list of options.
 
 * A `programChannel` must be passed to `getStatuses()`.
@@ -291,7 +302,7 @@ $demoMarketo = new DemoMarketoAPI();
 
 $programChannel = "Live Event";
 
-$programs = $demoMarketoClient->statuses()->getStatuses($programChannel);
+$programs = $demoMarketo->statuses()->getStatuses($programChannel);
 // $programs = { ... }
 ```
 

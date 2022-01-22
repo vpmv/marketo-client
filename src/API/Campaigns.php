@@ -2,33 +2,18 @@
 
 namespace EventFarm\Marketo\API;
 
-use EventFarm\Marketo\Client\MarketoClientInterface;
+use EventFarm\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
-use Psr\Http\Message\ResponseInterface;
 
-class Campaigns
+class Campaigns extends ApiEndpoint
 {
-    /** @var MarketoClientInterface */
-    private $client;
-
-    public function __construct(MarketoClientInterface $client)
+    public function getCampaigns(array $query = []): ResponseInterface
     {
-        $this->client = $client;
-    }
-
-    public function getCampaigns(array $options = []): ResponseInterface
-    {
-        $endpoint = '/rest/v1/campaigns.json';
-
-        foreach ($options as $key => $value) {
-            if (!empty($key)) {
-                $endpoint = strpos($endpoint, '.json?') ? $endpoint . '&' : $endpoint . '?';
-                $endpoint = $endpoint . $key . '=' . $value;
-            }
-        }
-
+        $endpoint = $this->restURI('/campaigns.json');
         try {
-            return $this->client->request('get', $endpoint);
+            return $this->client->request('get', $endpoint, [
+                'query' => $query,
+            ]);
         } catch (RequestException $e) {
             throw new MarketoException('Unable to get campaigns: ' . $e);
         }
@@ -36,7 +21,7 @@ class Campaigns
 
     public function triggerCampaign(int $campaignId, array $options): ResponseInterface
     {
-        $endpoint = '/rest/v1/campaigns/' . $campaignId . '/trigger.json';
+        $endpoint = $this->restURI('/campaigns/' . $campaignId . '/trigger.json');
         $requestOptions = [
             'headers' => [
                 'Content-Type' => 'application/json',

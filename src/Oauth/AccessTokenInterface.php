@@ -9,4 +9,6 @@ interface AccessTokenInterface
     public function getLastRefresh(): int;
 
     public function getExpires(): int;
+
+    public function hasExpired(): bool;
 }

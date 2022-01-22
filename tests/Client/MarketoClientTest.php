@@ -9,32 +9,38 @@ use EventFarm\Marketo\Oauth\RetryAuthorizationTokenFailedException;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class MarketoClientTest extends TestCase
 {
     public function testExceptionIsThrownWhenClientRetriesMoreThanMaxRetry()
     {
-        $restClient = \Mockery::mock(ClientInterface::class);
-        $provider = \Mockery::mock(MarketoProvider::class);
-        $accessToken = \Mockery::mock(AccessToken::class);
-        $accessToken->shouldReceive('getLastRefresh')
-            ->andReturn(1234567890);
-        $accessToken->shouldReceive('getExpires')
-            ->andReturn(1000);
-        $provider->shouldReceive('getAccessToken')
-            ->andReturn($accessToken);
-        $accessToken->shouldReceive('getToken')
-            ->andReturn('MOCKACCESSTOKEN');
-        $failedResponse = \Mockery::mock(ResponseInterface::class);
-        $failedResponse->shouldReceive('getStatusCode')
-            ->andReturn(401);
-        $failedResponse->shouldReceive('getBody')
-            ->andReturn($failedResponse);
-        $failedResponse->shouldReceive('__toString')
-            ->andReturn('{"result":[{}]}');
-        $restClient->shouldReceive('request')
-            ->andReturn($failedResponse)
-            ->times(3);
+        $restClient = $this->createMock(ClientInterface::class);
+        $provider = $this->createMock(MarketoProvider::class);
+        $accessToken = $this->createMock(AccessToken::class);
+        $accessToken
+            ->expects($this->any())
+            ->method('getLastRefresh')
+            ->willReturn(1234567890);
+        $accessToken
+            ->expects($this->any())
+            ->method('getExpires')
+            ->willReturn(1000);
+        $accessToken
+            ->expects($this->any())
+            ->method('getToken')
+            ->willReturn('MOCKACCESSTOKEN');
+        $provider
+            ->expects($this->any())
+            ->method('refreshAccessToken')
+            ->willReturn($accessToken);
+
+        $failedResponse = $this->getFailedResponseMock(401);
+
+        $restClient
+            ->expects($this->exactly(3))
+            ->method('request')
+            ->willReturn($failedResponse);
 
         $maxRetry = 3;
         $marketoClient = MarketoClient::with(
@@ -52,42 +58,38 @@ class MarketoClientTest extends TestCase
         } catch (RetryAuthorizationTokenFailedException $e) {
         }
         $this->assertEquals(1, 1);
-        \Mockery::close();
     }
 
     public function testFailWith401ThenRetryAndSucceedBeforeMaxRetryLimit()
     {
-        $restClient = \Mockery::mock(ClientInterface::class);
-        $provider = \Mockery::mock(MarketoProvider::class);
-        $accessToken = \Mockery::mock(AccessToken::class);
-        $accessToken->shouldReceive('getLastRefresh')
-            ->andReturn(1234567890);
-        $accessToken->shouldReceive('getExpires')
-            ->andReturn(1000);
-        $provider->shouldReceive('getAccessToken')
-            ->andReturn($accessToken);
-        $accessToken->shouldReceive('getToken')
-            ->andReturn('MOCKACCESSTOKEN');
-        $failedResponse = \Mockery::mock(ResponseInterface::class);
-        $failedResponse->shouldReceive('getStatusCode')
-            ->andReturn(401);
-        $failedResponse->shouldReceive('getBody')
-            ->andReturn($failedResponse);
-        $failedResponse->shouldReceive('__toString')
-            ->andReturn('{"result":[{}]}');
-        $successResponse = \Mockery::mock(ResponseInterface::class);
-        $successResponse->shouldReceive('getStatusCode')
-            ->andReturn(200);
-        $successResponse->shouldReceive('getBody')
-            ->andReturn($successResponse);
-        $successResponse->shouldReceive('__toString')
-            ->andReturn('{"result":[{}]}');
-        $restClient->shouldReceive('request')
-            ->andReturn($failedResponse)
-            ->times(2);
-        $restClient->shouldReceive('request')
-            ->andReturn($successResponse)
-            ->once();
+        $restClient = $this->createMock(ClientInterface::class);
+        $provider = $this->createMock(MarketoProvider::class);
+        $accessToken = $this->createMock(AccessToken::class);
+        $accessToken
+            ->expects($this->any())
+            ->method('getLastRefresh')
+            ->willReturn(1234567890);
+        $accessToken
+            ->expects($this->any())
+            ->method('getExpires')
+            ->willReturn(1000);
+        $accessToken
+            ->expects($this->any())
+            ->method('getToken')
+            ->willReturn('MOCKACCESSTOKEN');
+        $provider
+            ->expects($this->any())
+            ->method('refreshAccessToken')
+            ->willReturn($accessToken);
+
+        $failedResponse = $this->getFailedResponseMock(401);
+        $successResponse = $this->getResponseMock();
+
+        $restClient
+            ->expects($this->exactly(3))
+            ->method('request')
+            ->willReturnOnConsecutiveCalls($failedResponse, $failedResponse, $successResponse);
+
         $maxRetry = 3;
         $marketoClient = MarketoClient::with(
             $restClient,
@@ -100,42 +102,42 @@ class MarketoClientTest extends TestCase
         );
         $response = $marketoClient->request('GET', '/example/getExample');
         $this->assertSame(200, $response->getStatusCode());
-        \Mockery::close();
     }
 
     public function testFailWithMarketoErrorThenRetryAndSucceedBeforeMaxRetryLimit()
     {
-        $restClient = \Mockery::mock(ClientInterface::class);
-        $provider = \Mockery::mock(MarketoProvider::class);
-        $accessToken = \Mockery::mock(AccessToken::class);
-        $accessToken->shouldReceive('getLastRefresh')
-            ->andReturn(1234567890);
-        $accessToken->shouldReceive('getExpires')
-            ->andReturn(1000);
-        $provider->shouldReceive('getAccessToken')
-            ->andReturn($accessToken);
-        $accessToken->shouldReceive('getToken')
-            ->andReturn('MOCKACCESSTOKEN');
-        $failedResponse = \Mockery::mock(ResponseInterface::class);
-        $failedResponse->shouldReceive('getStatusCode')
-            ->andReturn(200);
-        $failedResponse->shouldReceive('getBody')
-            ->andReturn($failedResponse);
-        $failedResponse->shouldReceive('__toString')
-            ->andReturn('{"errors":[{"code": 601, "message": "Access token invalid"}]}');
-        $successResponse = \Mockery::mock(ResponseInterface::class);
-        $successResponse->shouldReceive('getStatusCode')
-            ->andReturn(200);
-        $successResponse->shouldReceive('getBody')
-            ->andReturn($successResponse);
-        $successResponse->shouldReceive('__toString')
-            ->andReturn('{"result":[{}]}');
-        $restClient->shouldReceive('request')
-            ->andReturn($failedResponse)
-            ->times(2);
-        $restClient->shouldReceive('request')
-            ->andReturn($successResponse)
-            ->once();
+        $restClient = $this->createMock(ClientInterface::class);
+        $provider = $this->createMock(MarketoProvider::class);
+        $accessToken = $this->createMock(AccessToken::class);
+        $accessToken
+            ->expects($this->any())
+            ->method('getLastRefresh')
+            ->willReturn(1234567890);
+        $accessToken
+            ->expects($this->any())
+            ->method('getExpires')
+            ->willReturn(1000);
+        $accessToken
+            ->expects($this->any())
+            ->method('getToken')
+            ->willReturn('MOCKACCESSTOKEN');
+        $provider
+            ->expects($this->any())
+            ->method('refreshAccessToken')
+            ->willReturn($accessToken);
+
+        $failedResponse = $this->getFailedResponseMock(200, [
+            [
+                "code"    => 601,
+                "message" => "Access token invalid",
+            ],
+        ]);
+        $successResponse = $this->getResponseMock();
+        $restClient
+            ->expects($this->exactly(3))
+            ->method('request')
+            ->willReturnOnConsecutiveCalls($failedResponse, $failedResponse, $successResponse);
+
         $maxRetry = 3;
         $marketoClient = MarketoClient::with(
             $restClient,
@@ -148,6 +150,49 @@ class MarketoClientTest extends TestCase
         );
         $response = $marketoClient->request('GET', '/example/getExample');
         $this->assertSame(200, $response->getStatusCode());
-        \Mockery::close();
     }
+
+    private function getResponseMock(int $responseCode = 200)
+    {
+        $responseStream = $this->createMock(StreamInterface::class);
+        $responseStream->expects($this->any())
+            ->method('getContents')
+            ->willReturn('{"result":[{}]}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->any())
+            ->method('getStatusCode')
+            ->willReturn($responseCode);
+        $response->expects($this->any())
+            ->method('getBody')
+            ->willReturn($responseStream);
+
+        return $response;
+    }
+
+    private function getFailedResponseMock(int $responseCode = 200, array $errors = [])
+    {
+        $responseBody = [
+            'result' => [],
+        ];
+        if ($errors) {
+            $responseBody['errors'] = $errors;
+        }
+
+        $responseStream = $this->createMock(StreamInterface::class);
+        $responseStream->expects($this->any())
+            ->method('getContents')
+            ->willReturn(json_encode($responseBody));
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->any())
+            ->method('getStatusCode')
+            ->willReturn($responseCode);
+        $response->expects($this->any())
+            ->method('getBody')
+            ->willReturn($responseStream);
+
+        return $response;
+    }
+
 }

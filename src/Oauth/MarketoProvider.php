@@ -2,48 +2,79 @@
 
 namespace EventFarm\Marketo\Oauth;
 
-use Kristenlk\OAuth2\Client\Provider\Marketo;
+use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Token\AccessToken as LeagueAccessToken;
+use Psr\Http\Message\ResponseInterface;
 
-class MarketoProvider implements MarketoProviderInterface
+class MarketoProvider extends AbstractProvider implements MarketoProviderInterface
 {
-    /**
-     * @var Marketo
-     */
-    public $marketo;
+    public string $baseUrl; // gets assigned in AbstractProvider constructor
 
-    public static function createDefaultProvider(
-        string $clientId,
-        string $clientSecret,
-        string $baseUrl
-    ) {
-        return new self(
-            new Marketo([
-                'clientId'     => $clientId,
-                'clientSecret' => $clientSecret,
-                'baseUrl'      => $baseUrl,
-            ])
-        );
+    public function __construct(string $clientId, string $clientSecret, string $baseUrl)
+    {
+        parent::__construct([
+            'clientId'     => $clientId,
+            'clientSecret' => $clientSecret,
+            'baseUrl'      => $baseUrl,
+        ]);
     }
 
-    public function __construct(Marketo $marketo)
-    {
-        $this->marketo = $marketo;
-    }
+    //public function getAccessToken($grant, array $options = [])
+    //{
+    //    return parent::getAccessToken($grant, $options);  // stub for unit testing purposes
+    //}
 
-    /**
-     * Requests an access token using a specified grant and option set.
-     *
-     * @param mixed $grant
-     * @param array $options
-     *
-     * @return AccessTokenInterface
-     */
-    public function getAccessToken($grant, array $options = []): AccessTokenInterface
+    public function refreshAccessToken(array $options = []): AccessTokenInterface
     {
-        $marketoAccessToken = $this->marketo->getAccessToken($grant, $options);
+        $leagueAT = $this->getAccessToken('client_credentials', $options);
         return new AccessToken(
-            $marketoAccessToken->getToken(),
-            $marketoAccessToken->getExpires()
+            $leagueAT->getToken(),
+            $leagueAT->getExpires()
         );
+    }
+
+    /**
+     * Returns the base URL for requesting an access token
+     *
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getBaseAccessTokenUrl(array $params)
+    {
+        return $this->baseUrl . "/identity/oauth/token";
+    }
+
+    /**
+     * Check a provider response for errors.
+     *
+     * @param ResponseInterface $response
+     * @param array|string      $data
+     *
+     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     */
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
+        if ($response->getStatusCode() >= 400) {
+            throw new IdentityProviderException(
+                $data['error'] ?: $response->getReasonPhrase(),
+                $response->getStatusCode(),
+                $response->getBody()
+            );
+        }
+    }
+
+    public function getBaseAuthorizationUrl()
+    {
+    }
+    public function getResourceOwnerDetailsUrl(LeagueAccessToken $token)
+    {
+    }
+    protected function getDefaultScopes()
+    {
+    }
+    protected function createResourceOwner(array $response, LeagueAccessToken $token)
+    {
     }
 }

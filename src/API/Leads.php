@@ -2,23 +2,23 @@
 
 namespace EventFarm\Marketo\API;
 
-use EventFarm\Marketo\Client\MarketoClientInterface;
+use EventFarm\Marketo\API\Traits\CsvTrait;
+use EventFarm\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
-use Psr\Http\Message\ResponseInterface;
 
-class Leads
+class Leads extends ApiEndpoint
 {
-    /** @var MarketoClientInterface */
-    private $client;
+    use CsvTrait;
 
-    public function __construct(MarketoClientInterface $client)
+    /**
+     * @param array $objects
+     *
+     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
+     * @throws \EventFarm\Marketo\API\MarketoException
+     */
+    public function upsert(array $objects): ResponseInterface
     {
-        $this->client = $client;
-    }
-
-    public function createOrUpdateLeads(array $objects): ResponseInterface
-    {
-        $endpoint = '/rest/v1/leads.json';
+        $endpoint = $this->restURI('/leads.json');
         $requestOptions = [
             'json'    => $objects,
             'headers' => [
@@ -27,17 +27,57 @@ class Leads
             ],
         ];
 
-
         try {
             return $this->client->request('post', $endpoint, $requestOptions);
         } catch (RequestException $e) {
-            throw new MarketoException('Unable to create or update leads: ' . $e);
+            throw new MarketoException('Unable to create or update leads', 0, $e);
         }
     }
 
+    /**
+     * Bulk upsert leads using CSV upload
+     *
+     * @param array $header  CSV header row
+     * @param array $objects Lead rows
+     *
+     * @return ResponseInterface
+     * @throws \EventFarm\Marketo\API\MarketoException
+     */
+    public function bulkUpsert(array $header, array $objects): ResponseInterface
+    {
+        $endpoint = $this->bulkURI('/leads.json');
+        $options = [
+            'query' => [
+                'format' => 'csv',
+            ],
+            'multipart' => [
+                [
+                    'name'     => 'leads.csv',
+                    'contents' => $this->encodeCsv($header, $objects),
+                    'headers'  => [
+                        'Content-Type' => 'text/csv',
+                    ],
+                ],
+            ],
+        ];
+
+        try {
+            return $this->client->request('post', $endpoint, $options);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to bulk upsert leads', 0, $e);
+        }
+    }
+
+    /**
+     * @param int   $programId
+     * @param array $options
+     *
+     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
+     * @throws \EventFarm\Marketo\API\MarketoException
+     */
     public function updateLeadsProgramStatus(int $programId, array $options = []): ResponseInterface
     {
-        $endpoint = '/rest/v1/leads/programs/' . $programId . '/status.json';
+        $endpoint = $this->restURI('/leads/programs/' . $programId . '/status.json');
 
         $requestOptions = [
             'headers' => [
@@ -53,26 +93,27 @@ class Leads
         try {
             return $this->client->request('post', $endpoint, $requestOptions);
         } catch (RequestException $e) {
-            throw new MarketoException('Unable to update leads\' program statuses: ' . $e);
+            throw new MarketoException('Unable to update leads\' program statuses', 0, $e);
         }
     }
 
-    public function getLeadsByProgram(int $programId, array $options = []): ResponseInterface
+    /**
+     * @param int   $programId
+     * @param array $query
+     *
+     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
+     * @throws \EventFarm\Marketo\API\MarketoException
+     */
+    public function getLeadsByProgram(int $programId, array $query = []): ResponseInterface
     {
         // Add &batchSize=1 to test batches of campaigns
-        $endpoint = '/rest/v1/leads/programs/' . $programId . '.json';
-
-        foreach ($options as $key => $value) {
-            if (!empty($key)) {
-                $endpoint = strpos($endpoint, '.json?') ? $endpoint . '&' : $endpoint . '?';
-                $endpoint = $endpoint . $key . '=' . $value;
-            }
-        }
-
+        $endpoint = $this->restURI('/leads/programs/' . $programId . '.json');
         try {
-            return $this->client->request('get', $endpoint);
+            return $this->client->request('get', $endpoint, [
+                'query' => $query,
+            ]);
         } catch (RequestException $e) {
-            throw new MarketoException('Unable to get leads by program: ' . $e);
+            throw new MarketoException('Unable to get leads by program', 0, $e);
         }
     }
 }

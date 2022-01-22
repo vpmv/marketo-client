@@ -5,9 +5,7 @@ namespace EventFarm\Marketo\Oauth;
 class AccessToken implements AccessTokenInterface
 {
     private $accessToken;
-
     private $expiresIn;
-
     private $lastRefresh;
 
     public function __construct(
@@ -25,11 +23,6 @@ class AccessToken implements AccessTokenInterface
         return $this->accessToken;
     }
 
-    public function setToken(string $accessToken)
-    {
-        $this->accessToken = $accessToken;
-    }
-
     public function getExpires(): int
     {
         return $this->expiresIn;
@@ -38,5 +31,10 @@ class AccessToken implements AccessTokenInterface
     public function getLastRefresh(): int
     {
         return $this->lastRefresh;
+    }
+
+    public function hasExpired(): bool
+    {
+        return time() >= $this->expiresIn - 300;
     }
 }

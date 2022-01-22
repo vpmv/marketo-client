@@ -1,9 +1,11 @@
 <?php
+
 namespace EventFarm\Marketo\Tests\Oauth;
 
+use EventFarm\Marketo\Oauth\AccessToken;
+use EventFarm\Marketo\Oauth\AccessTokenInterface;
 use EventFarm\Marketo\Oauth\MarketoProvider;
-use League\OAuth2\Client\Token\AccessToken;
-use Kristenlk\OAuth2\Client\Provider\Marketo;
+use League\OAuth2\Client\Token\AccessToken as LeagueAccessToken;
 use PHPUnit\Framework\TestCase;
 
 class MarketoProviderTest extends TestCase
@@ -12,18 +14,36 @@ class MarketoProviderTest extends TestCase
     {
         $myAccessToken = 'myAccessToken';
         $myExpiresIn = 1234567890;
-        $myLastRefresh = 2345678901;
-        $theLeagueAccessToken = \Mockery::mock(AccessToken::class);
-        $theLeagueAccessToken->shouldReceive('getToken')->andReturn($myAccessToken);
-        $theLeagueAccessToken->shouldReceive('getExpires')->andReturn($myExpiresIn);
-        $theLeagueAccessToken->shouldReceive('getLastRefresh')->andReturn($myLastRefresh);
-        $marketoProvider = \Mockery::mock(Marketo::class);
-        $marketoProvider->shouldReceive('getAccessToken')
-            ->andReturn($theLeagueAccessToken);
-        $kristenlkMarketoProvider = new MarketoProvider($marketoProvider);
-        $accessToken = $kristenlkMarketoProvider->getAccessToken('client_credentials');
-        $this->assertInstanceOf(\EventFarm\Marketo\Oauth\AccessToken::class, $accessToken);
-        $this->assertSame($myAccessToken, $accessToken->getToken());
-        \Mockery::close();
+        $time = time();
+
+        $leagueAccessToken = $this->createMock(LeagueAccessToken::class);
+        $leagueAccessToken
+            ->expects($this->any())
+            ->method('getToken')
+            ->willReturn($myAccessToken);
+        $leagueAccessToken
+            ->expects($this->any())
+            ->method('getExpires')
+            ->willReturn($myExpiresIn);
+
+        $marketoProvider = $this->createMock(MarketoProvider::class);
+        $marketoProvider
+            ->expects($this->any())
+            ->method('getAccessToken')
+            ->willReturn($leagueAccessToken);
+
+        $marketoProvider
+            ->expects($this->any())
+            ->method('refreshAccessToken')
+            ->willReturn(new AccessToken(
+                $leagueAccessToken->getToken(),
+                $leagueAccessToken->getExpires(),
+                $time
+            ));
+
+        $expectedToken = new AccessToken($myAccessToken, $myExpiresIn, $time);
+        $token = $marketoProvider->refreshAccessToken();
+        $this->assertInstanceOf(AccessTokenInterface::class, $token);
+        $this->assertEquals($expectedToken, $token);
     }
 }

@@ -2,13 +2,14 @@
 
 namespace EventFarm\Marketo\Client;
 
+use EventFarm\Marketo\Client\Response\ResponseInterface;
+use EventFarm\Marketo\Client\Response\RestResponse;
 use EventFarm\Marketo\Oauth\AccessToken;
 use EventFarm\Marketo\Oauth\MarketoProvider;
 use EventFarm\Marketo\Oauth\MarketoProviderInterface;
 use EventFarm\Marketo\Oauth\RetryAuthorizationTokenFailedException;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class MarketoClient implements MarketoClientInterface
 {
@@ -23,7 +24,6 @@ class MarketoClient implements MarketoClientInterface
     /** @var callable|null */
     private $tokenRefreshCallback;
     private int $maxRetryRequests;
-
 
     private function __construct(
         ClientInterface $guzzleClient,
@@ -77,57 +77,58 @@ class MarketoClient implements MarketoClientInterface
     }
 
 
-    private function getAccessToken(): string
+    /**
+     * Execute an API request
+     *
+     * @param string $method
+     * @param string $uri
+     * @param array  $options
+     *
+     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
+     * @throws \EventFarm\Marketo\Oauth\RetryAuthorizationTokenFailedException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function request(string $method, string $uri, array $options = []): ResponseInterface
     {
-        return $this->accessToken->getToken();
+        return $this->retryRequest($method, $uri, $options);
     }
 
-    private function isTokenValid(\stdClass $responseBody): bool
+    /**
+     * Marketo API version
+     *
+     * @return int
+     */
+    public function version(): int
     {
-        /* Depending on the endpoint, the JSON Marketo returns will always contain an errors key (like getPrograms
-        does) or will only contain an errors key if there are errors (like getCampaigns does) */
-        if (property_exists($responseBody, "errors") && !empty($responseBody->errors)) {
-            $errorCodes = [self::TOKEN_INVALID, self::TOKEN_EXPIRED];
-            foreach ($responseBody->errors as $error) {
-                if (in_array($error->code, $errorCodes)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return 1; // todo: implement if/when a new Marketo API is released
     }
 
-    private function isResponseAuthorized(ResponseInterface $response): bool
-    {
-        return $response->getStatusCode() !== 401;
-    }
-
-    private function refreshAccessToken()
-    {
-        $tokenResponse = $this->provider->getAccessToken('client_credentials');
-        $this->accessToken = $tokenResponse;
-
-        if (is_callable($this->tokenRefreshCallback)) {
-            call_user_func($this->tokenRefreshCallback, $tokenResponse);
-        }
-    }
-
+    /**
+     * Refresh token and attempt request up to max retries
+     *
+     * @param string $method
+     * @param string $uri
+     * @param array  $options
+     *
+     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
+     *
+     * @throws \EventFarm\Marketo\Oauth\RetryAuthorizationTokenFailedException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     private function retryRequest(string $method, string $uri, array $options): ResponseInterface
     {
         $attempts = 0;
         do {
             $expirationTime = $this->accessToken->getLastRefresh() + $this->accessToken->getExpires();
-
             if (time() >= $expirationTime - 300) {
                 $this->refreshAccessToken();
             }
 
-            $options['headers']['Authorization'] = 'Bearer ' . $this->getAccessToken();
-            $response = $this->client->request($method, $uri, $options);
-            $responseBody = json_decode($response->getBody()->__toString());
+            $options['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
+            $response = new RestResponse($this->client->request($method, $uri, $options));
 
             $isAuthorized = $this->isResponseAuthorized($response);
-            $isTokenValid = $this->isTokenValid($responseBody);
+            $isTokenValid = $this->isTokenValid($response);
 
             if (!$isAuthorized || !$isTokenValid) {
                 $this->refreshAccessToken();
@@ -144,8 +145,37 @@ class MarketoClient implements MarketoClientInterface
         return $response;
     }
 
-    public function request(string $method, string $uri, array $options = []): ResponseInterface
+    /**
+     * Refresh AccessToken
+     *
+     * Calls user defined hook to store the AccessToken
+     */
+    private function refreshAccessToken()
     {
-        return $this->retryRequest($method, $uri, $options);
+        $tokenResponse = $this->provider->refreshAccessToken();
+        $this->accessToken = $tokenResponse;
+
+        if (is_callable($this->tokenRefreshCallback)) {
+            call_user_func($this->tokenRefreshCallback, $tokenResponse);
+        }
+    }
+
+    private function isResponseAuthorized(ResponseInterface $response): bool
+    {
+        return $response->getStatusCode() !== 401;
+    }
+
+    private function isTokenValid(ResponseInterface $response): bool
+    {
+        /* Depending on the endpoint, the JSON Marketo returns will always contain an errors key (like getPrograms
+        does) or will only contain an errors key if there are errors (like getCampaigns does) */
+        if ($response->hasErrors()) {
+            foreach ($response->get('errors', []) as $error) {
+                if ($error['code'] == self::TOKEN_EXPIRED || $error['code'] == self::TOKEN_INVALID) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

@@ -12,5 +12,5 @@ interface MarketoProviderInterface
      *
      * @return AccessTokenInterface
      */
-    public function getAccessToken($grant, array $options = []): AccessTokenInterface;
+    public function refreshAccessToken(array $options = []): AccessTokenInterface;
 }
