@@ -35,9 +35,9 @@ $ composer install
 
 In order to get you up and running as easily as possible, we provide default implementations of a REST client and Marketo provider to use in combination with this package. 
 * We've chosen to use [Guzzle](https://github.com/guzzle/guzzle) for sending HTTP requests
-* We've chosen to use [The PHP League's Oauth Client](https://github.com/thephpleague/oauth2-client) and KirstenLK's [Marketo provider](https://github.com/kristenlk/oauth2-marketo) for Marketo authentication and token refresh.
+* We've chosen to use [The PHP League's Oauth Client](https://github.com/thephpleague/oauth2-client) for Marketo authentication and token refresh.
 
-You can extend the client to implement your own interface to cache the access token, using the construct argument TokenRefreshCallback.   
+You can **extend the client** to implement your own interface to cache the access token, using the construct argument TokenRefreshCallback.   
 
 ## Guzzle REST Client
 
