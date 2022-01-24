@@ -1,6 +1,6 @@
 <?php
 
-namespace EventFarm\Marketo\API;
+namespace Netitus\Marketo\API;
 
 /**
  * An exception for Marketo errors

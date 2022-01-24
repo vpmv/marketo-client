@@ -1,6 +1,6 @@
 <?php
 
-namespace EventFarm\Marketo\Oauth;
+namespace Netitus\Marketo\Oauth;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -19,11 +19,6 @@ class MarketoProvider extends AbstractProvider implements MarketoProviderInterfa
             'baseUrl'      => $baseUrl,
         ]);
     }
-
-    //public function getAccessToken($grant, array $options = [])
-    //{
-    //    return parent::getAccessToken($grant, $options);  // stub for unit testing purposes
-    //}
 
     public function refreshAccessToken(array $options = []): AccessTokenInterface
     {

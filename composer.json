@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "EventFarm\\Marketo\\": "src/"
+            "Netitus\\Marketo\\": "src/"
         }
     },
     "autoload-dev": {

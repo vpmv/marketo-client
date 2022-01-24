@@ -57,8 +57,8 @@ You can either use the provided [MarketoProvider](./src/Oauth/MarketoProvider.ph
 <?php
 namespace App;
 
-use EventFarm\Marketo\Oauth\AccessToken;
-use EventFarm\Marketo\MarketoClient;
+use Netitus\Marketo\Oauth\AccessToken;
+use Netitus\Marketo\MarketoClient;
 
 class DemoMarketoAPI extends Marketo
 {

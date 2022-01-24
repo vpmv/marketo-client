@@ -1,11 +1,11 @@
 <?php
 
-namespace EventFarm\Marketo\Tests\Client;
+namespace Netitus\Marketo\Tests\Client;
 
-use EventFarm\Marketo\Client\MarketoClient;
-use EventFarm\Marketo\Oauth\AccessToken;
-use EventFarm\Marketo\Oauth\MarketoProvider;
-use EventFarm\Marketo\Oauth\RetryAuthorizationTokenFailedException;
+use Netitus\Marketo\Client\MarketoClient;
+use Netitus\Marketo\Oauth\AccessToken;
+use Netitus\Marketo\Oauth\MarketoProvider;
+use Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

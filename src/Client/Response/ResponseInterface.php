@@ -1,6 +1,6 @@
 <?php
 
-namespace EventFarm\Marketo\Client\Response;
+namespace Netitus\Marketo\Client\Response;
 
 interface ResponseInterface
 {

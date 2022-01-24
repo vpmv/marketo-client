@@ -1,8 +1,8 @@
 <?php
 
-namespace EventFarm\Marketo\API;
+namespace Netitus\Marketo\API;
 
-use EventFarm\Marketo\Client\MarketoClientInterface;
+use Netitus\Marketo\Client\MarketoClientInterface;
 
 class ApiEndpoint
 {

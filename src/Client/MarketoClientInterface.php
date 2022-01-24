@@ -1,8 +1,8 @@
 <?php
 
-namespace EventFarm\Marketo\Client;
+namespace Netitus\Marketo\Client;
 
-use EventFarm\Marketo\Client\Response\ResponseInterface;
+use Netitus\Marketo\Client\Response\ResponseInterface;
 
 interface MarketoClientInterface
 {

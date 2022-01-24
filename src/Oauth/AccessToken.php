@@ -1,6 +1,6 @@
 <?php
 
-namespace EventFarm\Marketo\Oauth;
+namespace Netitus\Marketo\Oauth;
 
 class AccessToken implements AccessTokenInterface
 {

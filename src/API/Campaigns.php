@@ -1,8 +1,8 @@
 <?php
 
-namespace EventFarm\Marketo\API;
+namespace Netitus\Marketo\API;
 
-use EventFarm\Marketo\Client\Response\ResponseInterface;
+use Netitus\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
 class Campaigns extends ApiEndpoint

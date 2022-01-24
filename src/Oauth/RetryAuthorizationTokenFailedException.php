@@ -1,6 +1,6 @@
 <?php
 
-namespace EventFarm\Marketo\Oauth;
+namespace Netitus\Marketo\Oauth;
 
 /**
  * An exception for when the max retry limit is reached when trying to

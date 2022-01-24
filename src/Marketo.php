@@ -1,10 +1,10 @@
 <?php
 
-namespace EventFarm\Marketo;
+namespace Netitus\Marketo;
 
-use EventFarm\Marketo\API;
-use EventFarm\Marketo\Client\MarketoClient;
-use EventFarm\Marketo\Client\MarketoClientInterface;
+use Netitus\Marketo\API;
+use Netitus\Marketo\Client\MarketoClient;
+use Netitus\Marketo\Client\MarketoClientInterface;
 
 class Marketo
 {

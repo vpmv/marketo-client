@@ -1,12 +1,12 @@
 <?php
 
-namespace EventFarm\Marketo\Tests;
+namespace Netitus\Marketo\Tests;
 
-use EventFarm\Marketo\Client\MarketoClient;
-use EventFarm\Marketo\Marketo;
-use EventFarm\Marketo\Oauth\AccessToken;
-use EventFarm\Marketo\Oauth\AccessTokenInterface;
-use EventFarm\Marketo\Oauth\MarketoProviderInterface;
+use Netitus\Marketo\Client\MarketoClient;
+use Netitus\Marketo\Marketo;
+use Netitus\Marketo\Oauth\AccessToken;
+use Netitus\Marketo\Oauth\AccessTokenInterface;
+use Netitus\Marketo\Oauth\MarketoProviderInterface;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

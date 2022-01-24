@@ -1,9 +1,9 @@
 <?php
 
-namespace EventFarm\Marketo\API;
+namespace Netitus\Marketo\API;
 
-use EventFarm\Marketo\API\Traits\CsvTrait;
-use EventFarm\Marketo\Client\Response\ResponseInterface;
+use Netitus\Marketo\API\Traits\CsvTrait;
+use Netitus\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
 class Leads extends ApiEndpoint
@@ -13,8 +13,8 @@ class Leads extends ApiEndpoint
     /**
      * @param array $objects
      *
-     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
-     * @throws \EventFarm\Marketo\API\MarketoException
+     * @return \Netitus\Marketo\Client\Response\ResponseInterface
+     * @throws \Netitus\Marketo\API\MarketoException
      */
     public function upsert(array $objects): ResponseInterface
     {
@@ -41,7 +41,7 @@ class Leads extends ApiEndpoint
      * @param array $objects Lead rows
      *
      * @return ResponseInterface
-     * @throws \EventFarm\Marketo\API\MarketoException
+     * @throws \Netitus\Marketo\API\MarketoException
      */
     public function bulkUpsert(array $header, array $objects): ResponseInterface
     {
@@ -72,8 +72,8 @@ class Leads extends ApiEndpoint
      * @param int   $programId
      * @param array $options
      *
-     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
-     * @throws \EventFarm\Marketo\API\MarketoException
+     * @return \Netitus\Marketo\Client\Response\ResponseInterface
+     * @throws \Netitus\Marketo\API\MarketoException
      */
     public function updateLeadsProgramStatus(int $programId, array $options = []): ResponseInterface
     {
@@ -101,8 +101,8 @@ class Leads extends ApiEndpoint
      * @param int   $programId
      * @param array $query
      *
-     * @return \EventFarm\Marketo\Client\Response\ResponseInterface
-     * @throws \EventFarm\Marketo\API\MarketoException
+     * @return \Netitus\Marketo\Client\Response\ResponseInterface
+     * @throws \Netitus\Marketo\API\MarketoException
      */
     public function getLeadsByProgram(int $programId, array $query = []): ResponseInterface
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace EventFarm\Marketo\Tests\Oauth;
+namespace Netitus\Marketo\Tests\Oauth;
 
-use EventFarm\Marketo\Oauth\AccessToken;
-use EventFarm\Marketo\Oauth\AccessTokenInterface;
-use EventFarm\Marketo\Oauth\MarketoProvider;
+use Netitus\Marketo\Oauth\AccessToken;
+use Netitus\Marketo\Oauth\AccessTokenInterface;
+use Netitus\Marketo\Oauth\MarketoProvider;
 use League\OAuth2\Client\Token\AccessToken as LeagueAccessToken;
 use PHPUnit\Framework\TestCase;
 
