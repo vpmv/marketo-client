@@ -7,7 +7,7 @@ Marketo Client
 
 This package provides an interface for interacting with the Marketo REST API.
 
-The code is a revamped fork form eventfarm/marketo-client. The core principles are the same, but the internal architecture has been simplified. Performance should be optimized.
+The code is a revamped fork of [eventfarm/marketo-client](github.com/eventfarm/marketo-client). The internal architecture has been simplified, performance improved and helper functions added to aid integration into your consumer application.
 
 # Installation
 
