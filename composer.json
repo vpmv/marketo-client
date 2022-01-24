@@ -33,7 +33,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "EventFarm\\Marketo\\Tests\\": "tests/"
+            "Netitsu\\Marketo\\Tests\\": "tests/"
         }
     }
 }
