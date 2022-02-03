@@ -34,7 +34,7 @@ class MarketoClient implements MarketoClientInterface
     ) {
         $this->client = $guzzleClient;
         $this->provider = $marketoProvider;
-        $this->accessToken = $accessToken;
+        $this->accessToken = $accessToken ?: new AccessToken('', 0);
         $this->tokenRefreshCallback = $tokenRefreshCallback;
         $this->maxRetryRequests = $maxRetryRequests;
     }
@@ -67,11 +67,7 @@ class MarketoClient implements MarketoClientInterface
             'http_errors' => false,
             'base_uri'    => $baseUrl,
         ]);
-        $marketoProvider = MarketoProvider::createDefaultProvider(
-            $clientId,
-            $clientSecret,
-            $baseUrl,
-        );
+        $marketoProvider = new MarketoProvider($clientId, $clientSecret, $baseUrl);
 
         return new static($guzzleClient, $marketoProvider, $tokenRefreshCallback, null, $maxRetryRequests);
     }

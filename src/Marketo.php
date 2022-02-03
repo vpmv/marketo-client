@@ -21,6 +21,14 @@ class Marketo
         return new static($client);
     }
 
+    /**
+     * @return \Netitus\Marketo\Client\MarketoClientInterface
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
     public function programs()
     {
         return new API\Programs($this->client);
