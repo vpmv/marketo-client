@@ -2,14 +2,14 @@
 
 namespace Netitus\Marketo\Client;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Netitus\Marketo\Client\Response\ResponseInterface;
 use Netitus\Marketo\Client\Response\RestResponse;
 use Netitus\Marketo\Oauth\AccessToken;
 use Netitus\Marketo\Oauth\MarketoProvider;
 use Netitus\Marketo\Oauth\MarketoProviderInterface;
 use Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException;
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
 
 class MarketoClient implements MarketoClientInterface
 {
@@ -17,20 +17,24 @@ class MarketoClient implements MarketoClientInterface
     protected const TOKEN_INVALID              = 601;
     protected const TOKEN_EXPIRED              = 602;
 
-    private ClientInterface          $client;
-    private MarketoProviderInterface $provider;
-    private ?AccessToken             $accessToken;
+    /** @var \GuzzleHttp\ClientInterface */
+    private $client;
+    /** @var \Netitus\Marketo\Oauth\MarketoProviderInterface */
+    private $provider;
+    /** @var \Netitus\Marketo\Oauth\AccessToken|null */
+    private $accessToken;
 
     /** @var callable|null */
     private $tokenRefreshCallback;
-    private int $maxRetryRequests;
+    /** @var int */
+    private $maxRetryRequests;
 
     private function __construct(
         ClientInterface $guzzleClient,
         MarketoProviderInterface $marketoProvider,
+        int $maxRetryRequests,
         ?callable $tokenRefreshCallback = null,
-        ?AccessToken $accessToken = null,
-        int $maxRetryRequests
+        ?AccessToken $accessToken = null
     ) {
         $this->client = $guzzleClient;
         $this->provider = $marketoProvider;
@@ -45,11 +49,11 @@ class MarketoClient implements MarketoClientInterface
         ?AccessToken $accessToken = null,
         ?callable $tokenRefreshCallback = null,
         int $maxRetryRequests = null
-    ) {
+    ): MarketoClient {
         if (null === $maxRetryRequests) {
             $maxRetryRequests = static::DEFAULT_MAX_RETRY_REQUESTS;
         }
-        return new static($guzzleClient, $marketoProvider, $tokenRefreshCallback, $accessToken, $maxRetryRequests);
+        return new static($guzzleClient, $marketoProvider, $maxRetryRequests, $tokenRefreshCallback, $accessToken);
     }
 
     public static function withDefaults(
@@ -58,7 +62,7 @@ class MarketoClient implements MarketoClientInterface
         string $baseUrl,
         ?callable $tokenRefreshCallback = null,
         int $maxRetryRequests = null
-    ) {
+    ): MarketoClient {
         if (null === $maxRetryRequests) {
             $maxRetryRequests = static::DEFAULT_MAX_RETRY_REQUESTS;
         }
@@ -67,13 +71,13 @@ class MarketoClient implements MarketoClientInterface
             'http_errors' => false,
             'base_uri'    => $baseUrl,
         ]);
-        $marketoProvider = MarketoProvider::createDefaultProvider(
+        $marketoProvider = new MarketoProvider(
             $clientId,
             $clientSecret,
-            $baseUrl,
+            $baseUrl
         );
 
-        return new static($guzzleClient, $marketoProvider, $tokenRefreshCallback, null, $maxRetryRequests);
+        return new static($guzzleClient, $marketoProvider, $maxRetryRequests, $tokenRefreshCallback, null);
     }
 
 

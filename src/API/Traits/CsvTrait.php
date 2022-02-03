@@ -4,7 +4,7 @@ namespace Netitus\Marketo\API\Traits;
 
 trait CsvTrait
 {
-    public string $csvSeparator = ',';
+    public $csvSeparator = ',';
 
     public function encodeCsv(array $headerRow, array $content): string
     {

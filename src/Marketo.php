@@ -8,7 +8,8 @@ use Netitus\Marketo\Client\MarketoClientInterface;
 
 class Marketo
 {
-    private MarketoClientInterface $client;
+    /** @var \Netitus\Marketo\Client\MarketoClientInterface */
+    private $client;
 
     public function __construct(MarketoClientInterface $client)
     {

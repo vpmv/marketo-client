@@ -6,8 +6,10 @@ use Netitus\Marketo\Client\MarketoClientInterface;
 
 class ApiEndpoint
 {
-    protected MarketoClientInterface $client;
-    protected ?string                $version;
+    /** @var \Netitus\Marketo\Client\MarketoClientInterface */
+    protected $client;
+    /** @var string */
+    protected $version;
 
     public function __construct(MarketoClientInterface $client)
     {

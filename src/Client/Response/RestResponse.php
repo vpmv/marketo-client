@@ -6,8 +6,10 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class RestResponse implements ResponseInterface
 {
-    protected PsrResponseInterface $response;
-    protected ?array               $data = null;
+    /** @var \Psr\Http\Message\ResponseInterface */
+    protected $response;
+    /** @var array|null */
+    protected $data = null;
 
     public function __construct(PsrResponseInterface $response)
     {

@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class MarketoProvider extends AbstractProvider implements MarketoProviderInterface
 {
-    public string $baseUrl; // gets assigned in AbstractProvider constructor
+    public $baseUrl; // gets assigned in AbstractProvider constructor
 
     public function __construct(string $clientId, string $clientSecret, string $baseUrl)
     {
