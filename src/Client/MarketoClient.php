@@ -21,7 +21,7 @@ class MarketoClient implements MarketoClientInterface
     private $client;
     /** @var \Netitus\Marketo\Oauth\MarketoProviderInterface */
     private $provider;
-    /** @var \Netitus\Marketo\Oauth\AccessToken|null */
+    /** @var \Netitus\Marketo\Oauth\AccessToken */
     private $accessToken;
 
     /** @var callable|null */
@@ -38,7 +38,7 @@ class MarketoClient implements MarketoClientInterface
     ) {
         $this->client = $guzzleClient;
         $this->provider = $marketoProvider;
-        $this->accessToken = $accessToken;
+        $this->accessToken = $accessToken ?: new AccessToken('', 0);
         $this->tokenRefreshCallback = $tokenRefreshCallback;
         $this->maxRetryRequests = $maxRetryRequests;
     }
