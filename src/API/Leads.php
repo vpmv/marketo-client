@@ -20,7 +20,11 @@ class Leads extends ApiEndpoint
     {
         $endpoint = $this->restURI('/leads.json');
         $requestOptions = [
-            'json'    => $objects,
+            'json'    => [
+                "action"   => "createOrUpdate",
+                "dedupeBy" => "dedupeFields",
+                "input"    => $objects,
+            ],
             'headers' => [
                 // 'Accepts' => 'application/json'
                 'Content-Type' => 'application/json',
@@ -47,7 +51,7 @@ class Leads extends ApiEndpoint
     {
         $endpoint = $this->bulkURI('/leads.json');
         $options = [
-            'query' => [
+            'query'     => [
                 'format' => 'csv',
             ],
             'multipart' => [
