@@ -147,7 +147,11 @@ class MarketoTest extends TestCase
                     'Authorization' => 'Bearer ' . 'myAccessToken',
                     'Content-Type'  => 'application/json',
                 ],
-                'json'    => $options,
+                'json'    => [
+                    "action"   => "createOrUpdate",
+                    "dedupeBy" => "dedupeFields",
+                    "input"    => $options,
+                ],
             ]
         );
         $marketo = new Marketo($marketoClient);
