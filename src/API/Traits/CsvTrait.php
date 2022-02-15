@@ -6,12 +6,22 @@ trait CsvTrait
 {
     public $csvSeparator = ',';
 
+    /**
+     * @param array $headerRow
+     * @param array $content
+     *
+     * @return string
+     */
     public function encodeCsv(array $headerRow, array $content): string
     {
-        $result = implode($this->csvSeparator, $headerRow) . "\n";
+        $f = tmpfile();
+        fputcsv($f, $headerRow);
         foreach ($content as $row) {
-            $result .= implode($this->csvSeparator, $row) . "\n";
+            fputcsv($f, $row);
         }
-        return $result;
+        $contents = file_get_contents(stream_get_meta_data($f)['uri']);
+        fclose($f);
+
+        return $contents;
     }
 }
