@@ -10,13 +10,26 @@ class Leads extends ApiEndpoint
 {
     use CsvTrait;
 
+    public function describe(array $query = []): ResponseInterface
+    {
+        $endpoint = $this->restURI('/leads/describe.json');
+        try {
+            return $this->client->request('get', $endpoint, [
+                'query' => $query,
+            ]);
+        } catch (RequestException $e) {
+            throw new MarketoException('Unable to get lead fields: ' . $e);
+        }
+    }
+
+
     /**
      * @param array $objects
      *
      * @return \Netitus\Marketo\Client\Response\ResponseInterface
      * @throws \Netitus\Marketo\API\MarketoException
      */
-    public function upsert(array $objects): ResponseInterface
+    public function upsert(array $objects, array $options = []): ResponseInterface
     {
         $endpoint = $this->restURI('/leads.json');
         $requestOptions = [
@@ -24,7 +37,7 @@ class Leads extends ApiEndpoint
                 "action"   => "createOrUpdate",
                 "dedupeBy" => "dedupeFields",
                 "input"    => $objects,
-            ],
+            ] + $options,
             'headers' => [
                 // 'Accepts' => 'application/json'
                 'Content-Type' => 'application/json',
