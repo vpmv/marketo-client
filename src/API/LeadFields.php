@@ -5,8 +5,12 @@ namespace Netitus\Marketo\API;
 use Netitus\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
+/**
+ * @deprecated
+ */
 class LeadFields extends ApiEndpoint
 {
+    /** @deprecated  */
     public function getLeadFields(array $query = []): ResponseInterface
     {
         $endpoint = $this->restURI('/leads/describe.json');
