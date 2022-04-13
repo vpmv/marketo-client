@@ -1,15 +1,25 @@
 <?php
 
-namespace Netitus\Marketo\API;
+namespace Netitus\Marketo\API\Leads;
 
+use GuzzleHttp\Exception\RequestException;
+use Netitus\Marketo\API\ApiEndpoint;
+use Netitus\Marketo\API\Exception\MarketoException;
 use Netitus\Marketo\API\Traits\CsvTrait;
 use Netitus\Marketo\Client\Response\ResponseInterface;
-use GuzzleHttp\Exception\RequestException;
 
 class Leads extends ApiEndpoint
 {
     use CsvTrait;
 
+    /**
+     * Describe Lead API fields
+     *
+     * @param array $query
+     *
+     * @return \Netitus\Marketo\Client\Response\ResponseInterface
+     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     */
     public function describe(array $query = []): ResponseInterface
     {
         $endpoint = $this->restURI('/leads/describe.json');
@@ -26,7 +36,7 @@ class Leads extends ApiEndpoint
      * @param array $objects
      *
      * @return \Netitus\Marketo\Client\Response\ResponseInterface
-     * @throws \Netitus\Marketo\API\MarketoException
+     * @throws \Netitus\Marketo\API\Exception\MarketoException
      */
     public function upsert(array $objects, array $options = []): ResponseInterface
     {
@@ -44,7 +54,10 @@ class Leads extends ApiEndpoint
         ];
 
         try {
-            return $this->client->request('post', $endpoint, $requestOptions);
+            $res = $this->client->request('post', $endpoint, $requestOptions);
+            $this->evaluateResponse($res);
+
+            return $res;
         } catch (RequestException $e) {
             throw new MarketoException('Unable to create or update leads', 0, $e);
         }
@@ -57,7 +70,7 @@ class Leads extends ApiEndpoint
      * @param array $objects Lead rows
      *
      * @return ResponseInterface
-     * @throws \Netitus\Marketo\API\MarketoException
+     * @throws \Netitus\Marketo\API\Exception\MarketoException
      */
     public function bulkUpsert(array $header, array $objects): ResponseInterface
     {
@@ -89,7 +102,7 @@ class Leads extends ApiEndpoint
      * @param array $options
      *
      * @return \Netitus\Marketo\Client\Response\ResponseInterface
-     * @throws \Netitus\Marketo\API\MarketoException
+     * @throws \Netitus\Marketo\API\Exception\MarketoException
      */
     public function updateLeadsProgramStatus(int $programId, array $options = []): ResponseInterface
     {
@@ -118,7 +131,7 @@ class Leads extends ApiEndpoint
      * @param array $query
      *
      * @return \Netitus\Marketo\Client\Response\ResponseInterface
-     * @throws \Netitus\Marketo\API\MarketoException
+     * @throws \Netitus\Marketo\API\Exception\MarketoException
      */
     public function getLeadsByProgram(int $programId, array $query = []): ResponseInterface
     {

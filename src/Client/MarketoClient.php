@@ -87,14 +87,19 @@ class MarketoClient implements MarketoClientInterface
      * @param string $method
      * @param string $uri
      * @param array  $options
+     * @param string $responseClass Response interface
      *
      * @return \Netitus\Marketo\Client\Response\ResponseInterface
      * @throws \Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request(string $method, string $uri, array $options = []): ResponseInterface
-    {
-        return $this->retryRequest($method, $uri, $options);
+    public function request(
+        string $method,
+        string $uri,
+        array $options = [],
+        string $responseClass = RestResponse::class
+    ): ResponseInterface {
+        return $this->retryRequest($method, $uri, $options, $responseClass);
     }
 
     /**
@@ -119,8 +124,12 @@ class MarketoClient implements MarketoClientInterface
      * @throws \Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    private function retryRequest(string $method, string $uri, array $options): ResponseInterface
-    {
+    private function retryRequest(
+        string $method,
+        string $uri,
+        array $options,
+        string $className = RestResponse::class
+    ): ResponseInterface {
         $attempts = 0;
         do {
             $expirationTime = $this->accessToken->getLastRefresh() + $this->accessToken->getExpires();
@@ -129,7 +138,7 @@ class MarketoClient implements MarketoClientInterface
             }
 
             $options['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
-            $response = new RestResponse($this->client->request($method, $uri, $options));
+            $response = new $className($this->client->request($method, $uri, $options));
 
             $isAuthorized = $this->isResponseAuthorized($response);
             $isTokenValid = $this->isTokenValid($response);
