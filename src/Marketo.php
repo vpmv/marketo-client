@@ -30,6 +30,11 @@ class Marketo
         return $this->client;
     }
 
+    public function stats()
+    {
+        return new API\Stats($this->client);
+    }
+
     public function programs()
     {
         return new API\Programs($this->client);
@@ -40,23 +45,47 @@ class Marketo
         return new API\Campaigns($this->client);
     }
 
-    public function leadFields()
-    {
-        return new API\LeadFields($this->client);
-    }
-
     public function statuses()
     {
         return new API\Statuses($this->client);
     }
 
+    /**
+     * @return \Netitus\Marketo\API\Leads\LeadFields
+     * @deprecated
+     */
+    public function leadFields()
+    {
+        return new API\Leads\LeadFields($this->client);
+    }
+
     public function leads()
     {
-        return new API\Leads($this->client);
+        return new API\Leads\Leads($this->client);
+    }
+
+    public function companies()
+    {
+        return new API\Leads\Companies($this->client);
+    }
+
+    public function salesPersobns()
+    {
+        return new API\Leads\SalesPersons($this->client);
     }
 
     public function partitions()
     {
         return new API\Partitions($this->client);
+    }
+
+    public function folders()
+    {
+        return new API\Assets\Folders($this->client);
+    }
+
+    public function snippets()
+    {
+        return new API\Assets\Snippets($this->client);
     }
 }

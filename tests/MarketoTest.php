@@ -112,7 +112,7 @@ class MarketoTest extends TestCase
             $this->getAuthorizationHeader() + ['query' => []]
         );
         $marketo = new Marketo($marketoClient);
-        $marketo->leads()->describe();
+        $marketo->leadFields()->getLeadFields();
         \Mockery::close();
     }
 

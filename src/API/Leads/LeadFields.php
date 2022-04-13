@@ -1,16 +1,25 @@
 <?php
 
-namespace Netitus\Marketo\API;
+namespace Netitus\Marketo\API\Leads;
 
-use Netitus\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
+use Netitus\Marketo\API\ApiEndpoint;
+use Netitus\Marketo\API\Exception\MarketoException;
+use Netitus\Marketo\Client\Response\ResponseInterface;
 
 /**
  * @deprecated
  */
 class LeadFields extends ApiEndpoint
 {
-    /** @deprecated  */
+    /**
+     * @param array $query
+     *
+     * @return \Netitus\Marketo\Client\Response\ResponseInterface
+     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     *
+     * @deprecated Use Leads::describe()
+     */
     public function getLeadFields(array $query = []): ResponseInterface
     {
         $endpoint = $this->restURI('/leads/describe.json');
