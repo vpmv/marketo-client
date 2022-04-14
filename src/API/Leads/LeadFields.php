@@ -1,9 +1,11 @@
 <?php
 
-namespace Netitus\Marketo\API;
+namespace Netitus\Marketo\API\Leads;
 
-use Netitus\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
+use Netitus\Marketo\API\ApiEndpoint;
+use Netitus\Marketo\API\Exception\MarketoException;
+use Netitus\Marketo\Client\Response\ResponseInterface;
 
 /**
  * @deprecated

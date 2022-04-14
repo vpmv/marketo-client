@@ -2,14 +2,14 @@
 
 namespace Netitus\Marketo\Client;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Netitus\Marketo\Client\Response\ResponseInterface;
 use Netitus\Marketo\Client\Response\RestResponse;
 use Netitus\Marketo\Oauth\AccessToken;
 use Netitus\Marketo\Oauth\MarketoProvider;
 use Netitus\Marketo\Oauth\MarketoProviderInterface;
 use Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException;
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
 
 class MarketoClient implements MarketoClientInterface
 {
@@ -28,9 +28,9 @@ class MarketoClient implements MarketoClientInterface
     private function __construct(
         ClientInterface $guzzleClient,
         MarketoProviderInterface $marketoProvider,
+        int $maxRetryRequests,
         ?callable $tokenRefreshCallback = null,
-        ?AccessToken $accessToken = null,
-        int $maxRetryRequests
+        ?AccessToken $accessToken = null
     ) {
         $this->client = $guzzleClient;
         $this->provider = $marketoProvider;
@@ -45,11 +45,11 @@ class MarketoClient implements MarketoClientInterface
         ?AccessToken $accessToken = null,
         ?callable $tokenRefreshCallback = null,
         int $maxRetryRequests = null
-    ) {
+    ): MarketoClient {
         if (null === $maxRetryRequests) {
             $maxRetryRequests = static::DEFAULT_MAX_RETRY_REQUESTS;
         }
-        return new static($guzzleClient, $marketoProvider, $tokenRefreshCallback, $accessToken, $maxRetryRequests);
+        return new static($guzzleClient, $marketoProvider, $maxRetryRequests, $tokenRefreshCallback, $accessToken);
     }
 
     public static function withDefaults(
@@ -58,7 +58,7 @@ class MarketoClient implements MarketoClientInterface
         string $baseUrl,
         ?callable $tokenRefreshCallback = null,
         int $maxRetryRequests = null
-    ) {
+    ): MarketoClient {
         if (null === $maxRetryRequests) {
             $maxRetryRequests = static::DEFAULT_MAX_RETRY_REQUESTS;
         }
@@ -67,9 +67,13 @@ class MarketoClient implements MarketoClientInterface
             'http_errors' => false,
             'base_uri'    => $baseUrl,
         ]);
-        $marketoProvider = new MarketoProvider($clientId, $clientSecret, $baseUrl);
+        $marketoProvider = new MarketoProvider(
+            $clientId,
+            $clientSecret,
+            $baseUrl
+        );
 
-        return new static($guzzleClient, $marketoProvider, $tokenRefreshCallback, null, $maxRetryRequests);
+        return new static($guzzleClient, $marketoProvider, $maxRetryRequests, $tokenRefreshCallback, null);
     }
 
 
@@ -79,14 +83,19 @@ class MarketoClient implements MarketoClientInterface
      * @param string $method
      * @param string $uri
      * @param array  $options
+     * @param string $responseClass Response interface
      *
      * @return \Netitus\Marketo\Client\Response\ResponseInterface
      * @throws \Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request(string $method, string $uri, array $options = []): ResponseInterface
-    {
-        return $this->retryRequest($method, $uri, $options);
+    public function request(
+        string $method,
+        string $uri,
+        array $options = [],
+        string $responseClass = RestResponse::class
+    ): ResponseInterface {
+        return $this->retryRequest($method, $uri, $options, $responseClass);
     }
 
     /**
@@ -105,14 +114,19 @@ class MarketoClient implements MarketoClientInterface
      * @param string $method
      * @param string $uri
      * @param array  $options
+     * @param string $className
      *
      * @return \Netitus\Marketo\Client\Response\ResponseInterface
      *
-     * @throws \Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException
      */
-    private function retryRequest(string $method, string $uri, array $options): ResponseInterface
-    {
+    private function retryRequest(
+        string $method,
+        string $uri,
+        array $options,
+        string $className = RestResponse::class
+    ): ResponseInterface {
         $attempts = 0;
         do {
             $expirationTime = $this->accessToken->getLastRefresh() + $this->accessToken->getExpires();
@@ -121,7 +135,7 @@ class MarketoClient implements MarketoClientInterface
             }
 
             $options['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
-            $response = new RestResponse($this->client->request($method, $uri, $options));
+            $response = new $className($this->client->request($method, $uri, $options));
 
             $isAuthorized = $this->isResponseAuthorized($response);
             $isTokenValid = $this->isTokenValid($response);

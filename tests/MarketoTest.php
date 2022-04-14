@@ -52,7 +52,7 @@ class MarketoTest extends TestCase
                     'programName'   => $programName,
                     'nextPageToken' => $nextPageToken,
                 ],
-            ],
+            ]
         );
         $marketo = new Marketo($marketoClient);
         $marketo->campaigns()->getCampaigns(['programName' => $programName, 'nextPageToken' => $nextPageToken]);
@@ -109,7 +109,7 @@ class MarketoTest extends TestCase
             $marketoProvider,
             'get',
             '/rest/v1/leads/describe.json',
-            $this->getAuthorizationHeader() + ['query' => []]
+            $this->getAuthorizationHeader()
         );
         $marketo = new Marketo($marketoClient);
         $marketo->leads()->describe();

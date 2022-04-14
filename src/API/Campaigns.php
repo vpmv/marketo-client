@@ -2,6 +2,7 @@
 
 namespace Netitus\Marketo\API;
 
+use Netitus\Marketo\API\Exception\MarketoException;
 use Netitus\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
