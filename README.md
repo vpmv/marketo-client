@@ -20,7 +20,7 @@ Or add the following lines to your ``composer.json`` file:
 ```json
 {
     "require": {
-        "netitus/marketo-client": "dev-master"
+        "netitus/marketo-client": "dev-php72"
     }
 }
 ```
