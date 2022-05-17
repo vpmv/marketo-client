@@ -58,6 +58,9 @@ class Snippets extends ApiEndpoint
                             'type' => 'Folder',
                         ]),
                     ] + $attributes,
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+                ],
             ]);
             $this->evaluateResponse($res);
 
@@ -96,6 +99,9 @@ class Snippets extends ApiEndpoint
         try {
             $res = $this->client->request('post', $endpoint, [
                 'form_params' => $attributes,
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+                ],
             ]);
             $this->evaluateResponse($res);
 
@@ -143,6 +149,9 @@ class Snippets extends ApiEndpoint
                 'form_params' => [
                     'content' => $content,
                     'type'    => $contentType,
+                ],
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
                 ],
             ]);
             $this->evaluateResponse($res);
