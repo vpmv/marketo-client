@@ -1,10 +1,10 @@
 <?php
 
-namespace Netitus\Marketo;
+namespace VPMV\Marketo;
 
-use Netitus\Marketo\API;
-use Netitus\Marketo\Client\MarketoClient;
-use Netitus\Marketo\Client\MarketoClientInterface;
+use VPMV\Marketo\API;
+use VPMV\Marketo\Client\MarketoClient;
+use VPMV\Marketo\Client\MarketoClientInterface;
 
 class Marketo
 {
@@ -22,7 +22,7 @@ class Marketo
     }
 
     /**
-     * @return \Netitus\Marketo\Client\MarketoClientInterface
+     * @return \VPMV\Marketo\Client\MarketoClientInterface
      */
     public function getClient()
     {
@@ -50,7 +50,7 @@ class Marketo
     }
 
     /**
-     * @return \Netitus\Marketo\API\Leads\LeadFields
+     * @return \VPMV\Marketo\API\Leads\LeadFields
      * @deprecated
      */
     public function leadFields()

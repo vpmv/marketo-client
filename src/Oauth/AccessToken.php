@@ -1,6 +1,6 @@
 <?php
 
-namespace Netitus\Marketo\Oauth;
+namespace VPMV\Marketo\Oauth;
 
 class AccessToken implements AccessTokenInterface
 {

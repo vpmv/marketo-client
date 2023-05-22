@@ -1,8 +1,8 @@
 <?php
 
-namespace Netitus\Marketo\Client;
+namespace VPMV\Marketo\Client;
 
-use Netitus\Marketo\Client\Response\ResponseInterface;
+use VPMV\Marketo\Client\Response\ResponseInterface;
 
 interface MarketoClientInterface
 {

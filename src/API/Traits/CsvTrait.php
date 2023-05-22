@@ -1,6 +1,6 @@
 <?php
 
-namespace Netitus\Marketo\API\Traits;
+namespace VPMV\Marketo\API\Traits;
 
 trait CsvTrait
 {

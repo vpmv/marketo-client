@@ -1,6 +1,6 @@
 <?php
 
-namespace Netitus\Marketo\API;
+namespace VPMV\Marketo\API;
 
 use GuzzleHttp\Exception\RequestException;
 

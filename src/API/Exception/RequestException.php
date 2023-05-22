@@ -1,6 +1,6 @@
 <?php
 
-namespace Netitus\Marketo\API\Exception;
+namespace VPMV\Marketo\API\Exception;
 
 /**
  * An exception for Marketo errors

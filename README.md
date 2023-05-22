@@ -1,9 +1,9 @@
 Marketo Client
 ---
 
-[![Travis](https://img.shields.io/travis/netitus/marketo-client.svg?maxAge=2592000?style=flat-square)](https://travis-ci.org/netitus/marketo-client)
-[![Downloads](https://img.shields.io/packagist/dt/netitus/marketo-client.svg?style=flat-square)](https://packagist.org/packages/netitus/marketo-client)
-[![Packagist](https://img.shields.io/packagist/l/netitus/marketo-client.svg?maxAge=2592000?style=flat-square)](https://packagist.org/packages/netitus/marketo-client)
+[![Travis](https://img.shields.io/travis/vpmv/marketo-client.svg?maxAge=2592000?style=flat-square)](https://travis-ci.org/vpmv/marketo-client)
+[![Downloads](https://img.shields.io/packagist/dt/vpmv/marketo-client.svg?style=flat-square)](https://packagist.org/packages/vpmv/marketo-client)
+[![Packagist](https://img.shields.io/packagist/l/vpmv/marketo-client.svg?maxAge=2592000?style=flat-square)](https://packagist.org/packages/vpmv/marketo-client)
 
 This package provides an interface for interacting with the Marketo REST API.
 
@@ -12,7 +12,7 @@ The code is a revamped fork of [eventfarm/marketo-client](github.com/eventfarm/m
 # Installation
 
 ```
-$ composer require netitus/marketo-client
+$ composer require vpmv/marketo-client
 ```
 
 Or add the following lines to your ``composer.json`` file:
@@ -20,7 +20,7 @@ Or add the following lines to your ``composer.json`` file:
 ```json
 {
     "require": {
-        "netitus/marketo-client": "dev-master"
+        "vpmv/marketo-client": "dev-master"
     }
 }
 ```
@@ -57,8 +57,8 @@ You can either use the provided [MarketoProvider](./src/Oauth/MarketoProvider.ph
 <?php
 namespace App;
 
-use Netitus\Marketo\Oauth\AccessToken;
-use Netitus\Marketo\MarketoClient;
+use VPMV\Marketo\Oauth\AccessToken;
+use VPMV\Marketo\MarketoClient;
 
 class DemoMarketoAPI extends Marketo
 {

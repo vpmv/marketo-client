@@ -1,8 +1,8 @@
 <?php
 
-namespace Netitus\Marketo\API;
+namespace VPMV\Marketo\API;
 
-use Netitus\Marketo\Client\Response\ResponseInterface;
+use VPMV\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
 class Programs extends ApiEndpoint

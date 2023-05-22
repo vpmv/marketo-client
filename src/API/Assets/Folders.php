@@ -1,12 +1,12 @@
 <?php
 
-namespace Netitus\Marketo\API\Assets;
+namespace VPMV\Marketo\API\Assets;
 
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
-use Netitus\Marketo\API\ApiEndpoint;
-use Netitus\Marketo\API\Exception\MarketoException;
-use Netitus\Marketo\Client\Response\AssetResponse;
+use VPMV\Marketo\API\ApiEndpoint;
+use VPMV\Marketo\API\Exception\MarketoException;
+use VPMV\Marketo\Client\Response\AssetResponse;
 
 class Folders extends ApiEndpoint
 {
@@ -15,7 +15,7 @@ class Folders extends ApiEndpoint
      *
      * @param array $query
      *
-     * @return \Netitus\Marketo\Client\Response\ResponseInterface Folder listing
+     * @return \VPMV\Marketo\Client\Response\ResponseInterface Folder listing
      */
     public function getFolders(array $query = [])
     {
@@ -32,7 +32,7 @@ class Folders extends ApiEndpoint
      * @param string|null $description Folder description
      *
      * @return int Folder ID
-     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     * @throws \VPMV\Marketo\API\Exception\MarketoException
      */
     public function createFolder(string $name, int $parent, ?string $description = null): int
     {
@@ -66,7 +66,7 @@ class Folders extends ApiEndpoint
      * @param int|string|null $root Parent folder name or ID
      *
      * @return int|null Folder ID
-     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     * @throws \VPMV\Marketo\API\Exception\MarketoException
      */
     public function getFolderByName(string $name, $root = null): ?int
     {

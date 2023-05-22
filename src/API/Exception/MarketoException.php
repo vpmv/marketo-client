@@ -1,8 +1,8 @@
 <?php
 
-namespace Netitus\Marketo\API\Exception;
+namespace VPMV\Marketo\API\Exception;
 
-use Netitus\Marketo\Client\Response\ResponseInterface;
+use VPMV\Marketo\Client\Response\ResponseInterface;
 
 /**
  * An exception for Marketo errors

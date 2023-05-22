@@ -1,9 +1,9 @@
 <?php
 
-namespace Netitus\Marketo\API;
+namespace VPMV\Marketo\API;
 
-use Netitus\Marketo\API\Exception\MarketoException;
-use Netitus\Marketo\Client\Response\ResponseInterface;
+use VPMV\Marketo\API\Exception\MarketoException;
+use VPMV\Marketo\Client\Response\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
 class Campaigns extends ApiEndpoint

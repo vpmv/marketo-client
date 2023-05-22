@@ -1,12 +1,12 @@
 <?php
 
-namespace Netitus\Marketo\Tests;
+namespace VPMV\Marketo\Tests;
 
-use Netitus\Marketo\Client\MarketoClient;
-use Netitus\Marketo\Marketo;
-use Netitus\Marketo\Oauth\AccessToken;
-use Netitus\Marketo\Oauth\AccessTokenInterface;
-use Netitus\Marketo\Oauth\MarketoProviderInterface;
+use VPMV\Marketo\Client\MarketoClient;
+use VPMV\Marketo\Marketo;
+use VPMV\Marketo\Oauth\AccessToken;
+use VPMV\Marketo\Oauth\AccessTokenInterface;
+use VPMV\Marketo\Oauth\MarketoProviderInterface;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

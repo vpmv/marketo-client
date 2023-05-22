@@ -1,10 +1,10 @@
 <?php
 
-namespace Netitus\Marketo\API;
+namespace VPMV\Marketo\API;
 
-use Netitus\Marketo\API\Exception;
-use Netitus\Marketo\Client\MarketoClientInterface;
-use Netitus\Marketo\Client\Response\ResponseInterface;
+use VPMV\Marketo\API\Exception;
+use VPMV\Marketo\Client\MarketoClientInterface;
+use VPMV\Marketo\Client\Response\ResponseInterface;
 
 class ApiEndpoint
 {
@@ -35,10 +35,10 @@ class ApiEndpoint
     /**
      * Evaluates response/error code and throws appropriate exception
      *
-     * @param \Netitus\Marketo\Client\Response\ResponseInterface $response
+     * @param \VPMV\Marketo\Client\Response\ResponseInterface $response
      *
      * @return void
-     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     * @throws \VPMV\Marketo\API\Exception\MarketoException
      */
     protected function evaluateResponse(ResponseInterface $response): void
     {

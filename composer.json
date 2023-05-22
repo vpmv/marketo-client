@@ -1,5 +1,5 @@
 {
-    "name": "netitus/marketo-client",
+    "name": "vpmv/marketo-client",
     "description": "A PHP client for the Marketo REST API.",
     "keywords": ["marketo", "marketo api"],
     "license": "MIT",
@@ -28,12 +28,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Netitus\\Marketo\\": "src/"
+            "VPMV\\Marketo\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Netitsu\\Marketo\\Tests\\": "tests/"
+            "VPMV\\Marketo\\Tests\\": "tests/"
         }
     }
 }

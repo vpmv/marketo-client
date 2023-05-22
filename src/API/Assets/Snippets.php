@@ -1,11 +1,11 @@
 <?php
 
-namespace Netitus\Marketo\API\Assets;
+namespace VPMV\Marketo\API\Assets;
 
 use GuzzleHttp\Exception\RequestException;
-use Netitus\Marketo\API\ApiEndpoint;
-use Netitus\Marketo\API\Exception\MarketoException;
-use Netitus\Marketo\Client\Response\ResponseInterface;
+use VPMV\Marketo\API\ApiEndpoint;
+use VPMV\Marketo\API\Exception\MarketoException;
+use VPMV\Marketo\Client\Response\ResponseInterface;
 
 class Snippets extends ApiEndpoint
 {
@@ -39,7 +39,7 @@ class Snippets extends ApiEndpoint
      * @param array  $attributes  Other Snippet attributes
      *
      * @return int Snippet ID
-     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     * @throws \VPMV\Marketo\API\Exception\MarketoException
      */
     public function createSnippet(
         int $folderId,
@@ -85,7 +85,7 @@ class Snippets extends ApiEndpoint
      * @param int   $folderId  Update the snippet folder
      *
      * @return void
-     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     * @throws \VPMV\Marketo\API\Exception\MarketoException
      */
     public function updateSnippet(int $snippetId, array $attributes, int $folderId = 0): void
     {
@@ -119,7 +119,7 @@ class Snippets extends ApiEndpoint
      *
      * @param int $snippetId Snippet ID
      *
-     * @return \Netitus\Marketo\Client\Response\ResponseInterface
+     * @return \VPMV\Marketo\Client\Response\ResponseInterface
      */
     public function getContents(int $snippetId)
     {
@@ -138,7 +138,7 @@ class Snippets extends ApiEndpoint
      * @param string $contentType
      *
      * @return int
-     * @throws \Netitus\Marketo\API\Exception\MarketoException
+     * @throws \VPMV\Marketo\API\Exception\MarketoException
      */
     public function updateContent(int $snippetId, string $content, string $contentType = self::CONTENT_TYPE_HTML)
     {

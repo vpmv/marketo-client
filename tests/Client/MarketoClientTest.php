@@ -1,11 +1,11 @@
 <?php
 
-namespace Netitus\Marketo\Tests\Client;
+namespace VPMV\Marketo\Tests\Client;
 
-use Netitus\Marketo\Client\MarketoClient;
-use Netitus\Marketo\Oauth\AccessToken;
-use Netitus\Marketo\Oauth\MarketoProvider;
-use Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException;
+use VPMV\Marketo\Client\MarketoClient;
+use VPMV\Marketo\Oauth\AccessToken;
+use VPMV\Marketo\Oauth\MarketoProvider;
+use VPMV\Marketo\Oauth\RetryAuthorizationTokenFailedException;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

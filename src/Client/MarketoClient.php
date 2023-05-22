@@ -1,15 +1,15 @@
 <?php
 
-namespace Netitus\Marketo\Client;
+namespace VPMV\Marketo\Client;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use Netitus\Marketo\Client\Response\ResponseInterface;
-use Netitus\Marketo\Client\Response\RestResponse;
-use Netitus\Marketo\Oauth\AccessToken;
-use Netitus\Marketo\Oauth\MarketoProvider;
-use Netitus\Marketo\Oauth\MarketoProviderInterface;
-use Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException;
+use VPMV\Marketo\Client\Response\ResponseInterface;
+use VPMV\Marketo\Client\Response\RestResponse;
+use VPMV\Marketo\Oauth\AccessToken;
+use VPMV\Marketo\Oauth\MarketoProvider;
+use VPMV\Marketo\Oauth\MarketoProviderInterface;
+use VPMV\Marketo\Oauth\RetryAuthorizationTokenFailedException;
 
 class MarketoClient implements MarketoClientInterface
 {
@@ -85,8 +85,8 @@ class MarketoClient implements MarketoClientInterface
      * @param array  $options
      * @param string $responseClass Response interface
      *
-     * @return \Netitus\Marketo\Client\Response\ResponseInterface
-     * @throws \Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException
+     * @return \VPMV\Marketo\Client\Response\ResponseInterface
+     * @throws \VPMV\Marketo\Oauth\RetryAuthorizationTokenFailedException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function request(
@@ -116,10 +116,10 @@ class MarketoClient implements MarketoClientInterface
      * @param array  $options
      * @param string $className
      *
-     * @return \Netitus\Marketo\Client\Response\ResponseInterface
+     * @return \VPMV\Marketo\Client\Response\ResponseInterface
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Netitus\Marketo\Oauth\RetryAuthorizationTokenFailedException
+     * @throws \VPMV\Marketo\Oauth\RetryAuthorizationTokenFailedException
      */
     private function retryRequest(
         string $method,

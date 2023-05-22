@@ -1,10 +1,10 @@
 <?php
 
-namespace Netitus\Marketo\Tests\Oauth;
+namespace VPMV\Marketo\Tests\Oauth;
 
-use Netitus\Marketo\Oauth\AccessToken;
-use Netitus\Marketo\Oauth\AccessTokenInterface;
-use Netitus\Marketo\Oauth\MarketoProvider;
+use VPMV\Marketo\Oauth\AccessToken;
+use VPMV\Marketo\Oauth\AccessTokenInterface;
+use VPMV\Marketo\Oauth\MarketoProvider;
 use League\OAuth2\Client\Token\AccessToken as LeagueAccessToken;
 use PHPUnit\Framework\TestCase;
 

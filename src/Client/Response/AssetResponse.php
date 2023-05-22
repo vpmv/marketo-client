@@ -1,6 +1,6 @@
 <?php
 
-namespace Netitus\Marketo\Client\Response;
+namespace VPMV\Marketo\Client\Response;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
